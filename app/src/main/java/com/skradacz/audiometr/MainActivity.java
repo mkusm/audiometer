@@ -16,18 +16,20 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.sin1khz01a1min);
+        MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.laik);
         mediaPlayer.start();
 
         Button button = (Button) findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO button doing stuff
+                //TODO: button doing stuff
 
             }
         });
     }
+
+
 /*
     public void onPause(){
         super.onPause();
@@ -51,6 +53,7 @@ public class MainActivity extends Activity {
         if (id == R.id.action_settings) {
             return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
