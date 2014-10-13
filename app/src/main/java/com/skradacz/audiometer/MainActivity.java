@@ -69,7 +69,7 @@ public class MainActivity extends Activity {
                 //TODO
                 //if (freqChecker != frequency) {
                     //'if' makes sure frequency changed before button was clicked
-                    stringBuilder.append("For freq " + frequency + " mode is " + mode + "\n"); //TODO
+                    stringBuilder.append("For freq " + frequency + " mode is " + mode + "\n");
                     mode = 11;
                     if (frequency==8000) {
                         result = stringBuilder.toString();
@@ -128,7 +128,6 @@ public class MainActivity extends Activity {
                 }else if (frequency == 4000) {
                     frequency = 8000;
                 }else if (frequency == 8000) {
-                    //TODO: do intent
                     stop = true;
                 }
             }
