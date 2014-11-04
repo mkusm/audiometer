@@ -3,6 +3,7 @@ package com.skradacz.audiometer;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
+import android.util.Log;
 
 public class ToneGen {
 
@@ -11,6 +12,7 @@ public class ToneGen {
     double RAD = 2.0 * Math.PI;
     AudioTrack aTrack;
     public byte[] buffer;
+    public static final String TAG = ToneGen.class.getSimpleName();
 
     /**
      * @param frequency The frequency of the tone in Hz
@@ -37,8 +39,12 @@ public class ToneGen {
     }
 
     public void stop(){
-        aTrack.stop();
-        aTrack.release();
+        try{
+            aTrack.stop();
+            aTrack.release();
+        }catch(Exception e){
+            Log.d(TAG, "stop(), exception captured");
+        }
     }
 
     public void volume(float leftVolume, float rightVolume){

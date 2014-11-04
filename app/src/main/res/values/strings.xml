@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Audiometr</string>
+    <string name="app_name">Audiometer</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="sound_hear_textview">Click on the button when you hear the sound</string>
+    <string name="sound_hear_text_view">Click here when you hear the sound</string>
     <string name="exit_button_label">Exit</string>
+    <string name="title_activity_examination">Examination</string>
 
 </resources>

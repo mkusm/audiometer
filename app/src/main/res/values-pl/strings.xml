@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Audiometr</string>
+    <string name="action_settings">Ustawienia</string>
+    <string name="exit_button_label">Wyjście</string>
+    <string name="hello_world">Witaj świecie!</string>
+    <string name="sound_hear_text_view">Dotknij, gdy usłyszysz dźwięk</string>
+    <string name="title_activity_examination">Badanie</string>
+</resources>
