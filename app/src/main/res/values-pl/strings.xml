@@ -16,4 +16,11 @@
     <string name="save_button_label">Zapisz</string>
     <string name="about_alert_title">info</string>
     <string name="about_alert_message">Autor: Michał Kuśmierczyk</string>
+    <string name="title_activity_graph">Wykres</string>
+    <string name="graph_text_view_title">wykres</string>
+    <string name="how_to_points_text_view">1. Podepnij słuchawki
+        \n2. Włóż słuchawki do uszu
+         \n3. Dotknij przycisk \'start\' aby zacząć badanie
+         \n4. Dotknij przycisk na środku ekranu gdy usłyszysz dźwięk
+         \n5. Wykres pokaże jak działa twój słuch</string>
 </resources>

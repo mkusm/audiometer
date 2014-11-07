@@ -7,24 +7,8 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.skradacz.audiometer.SettingsActivity"
-    android:background="@android:color/background_dark">
-
-<!--    <TextView android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:keepScreenOn="true"
-        android:textColor="@android:color/secondary_text_dark"
-        android:textStyle="bold"
-        android:textSize="50sp"
-        android:gravity="center"
-        android:text="SETTINGS"
-        android:clickable="true"
-        android:layout_centerVertical="true"
-        android:onClick=""/>
-
-    <TextView android:text="SETTINGS" android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/primary_text_dark"/>-->
+    android:background="@android:color/background_dark"
+    tools:ignore="Overdraw">
 
     <CheckBox
         android:layout_width="wrap_content"

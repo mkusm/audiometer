@@ -6,9 +6,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 
-// todo NOT WORKING AT ALL AT THE MOMENT
-
-
 public class SettingsActivity extends Activity {
 
     public CheckBox checkBox;

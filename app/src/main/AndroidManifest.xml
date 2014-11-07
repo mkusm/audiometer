@@ -16,14 +16,15 @@
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name="com.skradacz.audiometer.ExaminationActivity"
             android:label="@string/title_activity_examination"
-            android:screenOrientation="portrait"
-            android:parentActivityName="com.skradacz.audiometer.MainActivity" >
+            android:parentActivityName="com.skradacz.audiometer.MainActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.skradacz.audiometer.MainActivity" />
@@ -31,8 +32,8 @@
         <activity
             android:name="com.skradacz.audiometer.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:screenOrientation="portrait"
-            android:parentActivityName="com.skradacz.audiometer.MainActivity" >
+            android:parentActivityName="com.skradacz.audiometer.MainActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.skradacz.audiometer.MainActivity" />
@@ -40,7 +41,15 @@
         <activity
             android:name="com.skradacz.audiometer.HowToActivity"
             android:label="@string/title_activity_how_to"
-            android:screenOrientation="portrait"
+            android:parentActivityName="com.skradacz.audiometer.MainActivity"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.skradacz.audiometer.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.skradacz.audiometer.GraphActivity"
+            android:label="@string/title_activity_graph"
             android:parentActivityName="com.skradacz.audiometer.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

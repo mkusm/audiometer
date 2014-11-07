@@ -10,17 +10,18 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
-    public TextView textView1Start, textView2HowTo, textView3Settings, textView4About;
+    public TextView textView1Start, textView2Graph, textView3HowTo, textView4Settings, textView5About;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textView1Start = (TextView) findViewById(R.id.click_here);
-        textView2HowTo = (TextView) findViewById(R.id.click_here2);
-        textView3Settings = (TextView) findViewById(R.id.click_here3);
-        textView4About = (TextView) findViewById(R.id.click_here4);
+        textView1Start = (TextView) findViewById(R.id.start_text_view);
+        textView2Graph = (TextView) findViewById(R.id.graph_text_view);
+        textView3HowTo = (TextView) findViewById(R.id.how_to_text_view);
+        textView4Settings = (TextView) findViewById(R.id.settings_text_view);
+        textView5About = (TextView) findViewById(R.id.about_text_view);
 
         textView1Start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -30,7 +31,15 @@ public class MainActivity extends Activity {
             }
         });
 
-        textView2HowTo.setOnClickListener(new View.OnClickListener() {
+        textView2Graph.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, GraphActivity.class);
+                MainActivity.this.startActivity(intent);
+            }
+        });
+
+        textView3HowTo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, HowToActivity.class);
@@ -38,16 +47,15 @@ public class MainActivity extends Activity {
             }
         });
 
-        textView3Settings.setOnClickListener(new View.OnClickListener() {
+        textView4Settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Toast.makeText(getApplicationContext(), "TBA", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
                 MainActivity.this.startActivity(intent);
             }
         });
 
-        textView4About.setOnClickListener(new View.OnClickListener() {
+        textView5About.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -59,27 +67,7 @@ public class MainActivity extends Activity {
             }
         });
 
-
     }
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
 
 }
 
