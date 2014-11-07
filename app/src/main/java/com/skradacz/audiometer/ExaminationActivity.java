@@ -30,6 +30,8 @@ public class ExaminationActivity extends Activity {
     public int mode = 0;
     public boolean stop = false;
     public String result;
+    public boolean rightEar = false;
+    public boolean leftEar = false;
 //    public double freqChecker = 1;
 
     @Override
@@ -114,6 +116,10 @@ public class ExaminationActivity extends Activity {
                     }else if (frequency == 4000) {
                         frequency = 8000;
                     }else if (frequency == 8000) {
+                        if (!rightEar && !leftEar) {
+                            leftEar = true;
+                            frequency = 250;
+                        }
                         stop = true;
                     }
                 }
@@ -137,10 +143,15 @@ public class ExaminationActivity extends Activity {
                     audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 6, 0);
                     amplitude = 128;
                 }
+
                 toneGen.stop();
                 toneGen = new ToneGen(frequency, duration, amplitude);
                 toneGen.play();
-                toneGen.volume(0.0f, mode/10f);
+                if (rightEar) {
+                    toneGen.volume(0.0f, mode/10f);
+                }else if (leftEar) {
+                    toneGen.volume(mode/10f, 0.0f);
+                }
                 mode++;
 
                 time++;

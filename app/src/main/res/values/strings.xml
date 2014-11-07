@@ -7,7 +7,11 @@
     <string name="sound_hear_text_view">Click here when you hear the sound</string>
     <string name="exit_button_label">Exit</string>
     <string name="title_activity_examination">Examination</string>
-    <string name="title_activity_settings">Settings</string>
     <string name="title_activity_how_to">How To</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="text_view_start">start</string>
+    <string name="text_view_how_to">how to use</string>
+    <string name="text_view_settings">settings</string>
+    <string name="text_view_about">about</string>
 
 </resources>

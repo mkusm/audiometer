@@ -6,4 +6,10 @@
     <string name="hello_world">Witaj świecie!</string>
     <string name="sound_hear_text_view">Dotknij, gdy usłyszysz dźwięk</string>
     <string name="title_activity_examination">Badanie</string>
+    <string name="title_activity_how_to">Jak używać</string>
+    <string name="title_activity_settings">Ustawienia</string>
+    <string name="text_view_settings">ustawienia</string>
+    <string name="text_view_start">start</string>
+    <string name="text_view_how_to">jak używać</string>
+    <string name="text_view_about">info</string>
 </resources>

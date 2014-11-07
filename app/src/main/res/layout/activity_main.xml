@@ -17,7 +17,7 @@
         android:textStyle="bold"
         android:textSize="50sp"
         android:gravity="center"
-        android:text="start"
+        android:text="@string/text_view_start"
         android:clickable="true"
         android:layout_centerVertical="true"
         android:onClick=""/>
@@ -29,7 +29,7 @@
         android:textStyle="bold"
         android:textSize="50sp"
         android:gravity="center"
-        android:text="how to use"
+        android:text="@string/text_view_how_to"
         android:clickable="true"
         android:layout_below="@+id/click_here"
         android:onClick=""/>
@@ -41,7 +41,7 @@
         android:textStyle="bold"
         android:textSize="50sp"
         android:gravity="center"
-        android:text="settings"
+        android:text="@string/text_view_settings"
         android:clickable="true"
         android:layout_below="@id/click_here2"
         android:onClick=""/>
@@ -53,7 +53,7 @@
         android:textStyle="bold"
         android:textSize="50sp"
         android:gravity="center"
-        android:text="about"
+        android:text="@string/text_view_about"
         android:clickable="true"
         android:layout_below="@id/click_here3"
         android:onClick=""/>
