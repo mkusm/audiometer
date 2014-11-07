@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Audiometer</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="sound_hear_text_view">Click here when you hear the sound</string>
     <string name="exit_button_label">Exit</string>
@@ -13,5 +11,15 @@
     <string name="text_view_how_to">how to use</string>
     <string name="text_view_settings">settings</string>
     <string name="text_view_about">about</string>
-
+    <string name="about_alert_title">About</string>
+    <string name="about_alert_message">Made by Michał Kuśmierczyk\n</string>
+    <string name="test_info_text_view_label">Only for developers</string>
+    <string name="save_button_label">Save</string>
+    <string name="test_check_box_label">Test Mode</string>
+    <string name="how_to_points_text_view">
+        1. Plug in your headphones
+        \n2. Put headphones into your ears
+        \n3. Tap on \'start\' to begin the examination
+        \n4. Tap on the button in the middle of the screen when you hear the sound
+        \n5. The graph shows how your ears work</string>
 </resources>

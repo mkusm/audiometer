@@ -3,7 +3,6 @@
     <string name="app_name">Audiometr</string>
     <string name="action_settings">Ustawienia</string>
     <string name="exit_button_label">Wyjście</string>
-    <string name="hello_world">Witaj świecie!</string>
     <string name="sound_hear_text_view">Dotknij, gdy usłyszysz dźwięk</string>
     <string name="title_activity_examination">Badanie</string>
     <string name="title_activity_how_to">Jak używać</string>
@@ -12,4 +11,9 @@
     <string name="text_view_start">start</string>
     <string name="text_view_how_to">jak używać</string>
     <string name="text_view_about">info</string>
+    <string name="test_info_text_view_label">Tylko dla programistów</string>
+    <string name="test_check_box_label">Ustawienie testowe</string>
+    <string name="save_button_label">Zapisz</string>
+    <string name="about_alert_title">info</string>
+    <string name="about_alert_message">Autor: Michał Kuśmierczyk</string>
 </resources>

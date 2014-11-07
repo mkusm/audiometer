@@ -67,4 +67,14 @@
         android:layout_below="@+id/textView5"
         android:layout_centerHorizontal="true"
         android:textColor="@android:color/primary_text_dark" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/testInfoTextView"
+        android:layout_below="@+id/textView6"
+        android:layout_centerHorizontal="true"
+        android:textColor="@android:color/primary_text_dark" />
+
 </RelativeLayout>

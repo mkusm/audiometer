@@ -27,7 +27,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="1. Plug in your headphones\n2. Put headphones in ear\n3. Tap on 'start' to begin the examination\n4. Tap on the button in the middle of the screen when you hear the sound\n5. The graph show how your ear work"
+        android:text="@string/how_to_points_text_view"
         android:id="@+id/textView"
         android:layout_below="@+id/title"
         android:layout_alignParentLeft="true"

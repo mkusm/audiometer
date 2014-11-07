@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 public class MainActivity extends Activity {
@@ -42,7 +41,9 @@ public class MainActivity extends Activity {
         textView3Settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "TBA", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "TBA", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                MainActivity.this.startActivity(intent);
             }
         });
 
@@ -50,9 +51,8 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("About");
-                builder.setMessage("Made by Michał Kuśmierczyk\n" +
-                        "");
+                builder.setTitle(getString(R.string.about_alert_title));
+                builder.setMessage(getString(R.string.about_alert_message));
                 builder.setPositiveButton(android.R.string.ok, null);
                 AlertDialog dialog = builder.create();
                 dialog.show();
