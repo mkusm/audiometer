@@ -5,21 +5,22 @@ import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.util.Log;
 
-public class ToneGen {
+class ToneGen {
 
-    int seconds;
-    int sampleRate = 44100;
-    double RAD = 2.0 * Math.PI;
-    AudioTrack aTrack;
-    public byte[] buffer;
-    public static final String TAG = ToneGen.class.getSimpleName();
+    private final int sampleRate = 44100;
+    @SuppressWarnings("FieldCanBeLocal")
+    private final double RAD = 2.0 * Math.PI;
+    private AudioTrack aTrack;
+    @SuppressWarnings("CanBeFinal")
+    private byte[] buffer;
+    private static final String TAG = ToneGen.class.getSimpleName();
 
     /**
      * @param frequency The frequency of the tone in Hz
      * @param duration The duration of the tone in seconds
      */
     public ToneGen(double frequency, int duration, double amplitude){
-        seconds = duration * 2 * 2;
+        int seconds = duration * 2 * 2;
 
         buffer = new byte[sampleRate * seconds];
         for ( int i=0; i<buffer.length; i++ )
@@ -54,6 +55,7 @@ public class ToneGen {
         * @param rightVolume Right volume 0.0f - silent, 1.0f full volume
         */
 
+        //noinspection deprecation
         aTrack.setStereoVolume(leftVolume, rightVolume);
     }
 }

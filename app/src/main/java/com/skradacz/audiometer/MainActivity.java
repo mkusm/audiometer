@@ -10,18 +10,16 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
-    public TextView textView1Start, textView2Graph, textView3HowTo, textView4Settings, textView5About;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textView1Start = (TextView) findViewById(R.id.start_text_view);
-        textView2Graph = (TextView) findViewById(R.id.graph_text_view);
-        textView3HowTo = (TextView) findViewById(R.id.how_to_text_view);
-        textView4Settings = (TextView) findViewById(R.id.settings_text_view);
-        textView5About = (TextView) findViewById(R.id.about_text_view);
+        TextView textView1Start = (TextView) findViewById(R.id.start_text_view);
+        TextView textView2Graph = (TextView) findViewById(R.id.graph_text_view);
+        TextView textView3HowTo = (TextView) findViewById(R.id.how_to_text_view);
+        TextView textView4Settings = (TextView) findViewById(R.id.settings_text_view);
+        TextView textView5About = (TextView) findViewById(R.id.about_text_view);
 
         textView1Start.setOnClickListener(new View.OnClickListener() {
             @Override

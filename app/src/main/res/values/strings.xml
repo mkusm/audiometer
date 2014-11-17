@@ -4,7 +4,6 @@
     <string name="app_name">Audiometer</string>
     <string name="action_settings">Settings</string>
     <string name="sound_hear_text_view">Click here when you hear the sound</string>
-    <string name="exit_button_label">Exit</string>
     <string name="title_activity_examination">Examination</string>
     <string name="title_activity_how_to">How To</string>
     <string name="title_activity_settings">Settings</string>
@@ -24,5 +23,6 @@
         \n5. The graph shows how your hearing works</string>
     <string name="title_activity_graph">Graph</string>
     <string name="graph_text_view_title">graph</string>
+    <string name="how_to_text_view_label">How to</string>
 
 </resources>

@@ -8,8 +8,7 @@ import android.widget.CheckBox;
 
 public class SettingsActivity extends Activity {
 
-    public CheckBox checkBox;
-    public Button saveButton;
+    private CheckBox checkBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,7 +16,7 @@ public class SettingsActivity extends Activity {
         setContentView(R.layout.activity_settings);
 
         checkBox = (CheckBox) findViewById(R.id.checkBox);
-        saveButton = (Button) findViewById(R.id.saveButton);
+        Button saveButton = (Button) findViewById(R.id.saveButton);
 
         Global global = ((Global)getApplicationContext());
         checkBox.setChecked(global.getTestChecked());
@@ -25,7 +24,7 @@ public class SettingsActivity extends Activity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Global global = ((Global)getApplicationContext());
+                Global global = ((Global) getApplicationContext());
                 global.setTestChecked(checkBox.isChecked());
             }
         });

@@ -7,7 +7,14 @@
     tools:context="com.skradacz.audiometer.GraphActivity"
     android:background="@android:color/background_dark">
 
-    <TextView android:text="" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/layout"
+        android:layout_alignParentTop="true">
+    </LinearLayout>
 
 </RelativeLayout>

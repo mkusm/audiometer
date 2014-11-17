@@ -13,25 +13,27 @@ import android.widget.TextView;
 
 public class ExaminationActivity extends Activity {
 
-    public TextView clickHere, textview2, textview3, textview4, textview5, textview6, textview7;
+    private TextView textview2;
+    private TextView textview3;
+    private TextView textview4;
+    private TextView textview5;
+    private TextView textview6;
+    private TextView textview7;
 
-    public AudioManager audioManager;
-    public ToneGen toneGen;
-    private Handler handler = new Handler();
-    StringBuilder stringBuilder = new StringBuilder();
+    private AudioManager audioManager;
+    private ToneGen toneGen;
+    private final Handler handler = new Handler();
+    private final StringBuilder stringBuilder = new StringBuilder();
 
-    public double frequency = 250;                  // toneGen frequency
-    public int duration = 6;                        // toneGen duration in seconds
-    public double amplitude = 1.0f;                 // toneGen amplitude
+    private double frequency = 250;                  // toneGen frequency
+    private final int duration = 6;                  // toneGen duration in seconds
+    private double amplitude = 1.0f;                 // toneGen amplitude
 
-    public int time = 0;                            // VolumeUp time counter, starts at 0
-    public int delay = 1000 * 4;                    // 1000 = 1s; time it takes for VolumeUp to post
-
-    public int mode = 0;
-    public boolean stop = false;
-    public String result;
-    public boolean rightEar = false;
-    public boolean leftEar = false;
+    private int mode = 0;
+    private boolean stop = false;
+    private String result;
+    private boolean rightEar = false;
+    private boolean leftEar = false;
 //    public double freqChecker = 1;
 
     @Override
@@ -40,7 +42,7 @@ public class ExaminationActivity extends Activity {
         setContentView(R.layout.activity_examination);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        clickHere = (TextView) findViewById(R.id.start_text_view);
+        TextView clickHere = (TextView) findViewById(R.id.start_text_view);
         textview2 = (TextView) findViewById(R.id.textView2);
         textview3 = (TextView) findViewById(R.id.textView3);
         textview4 = (TextView) findViewById(R.id.textView4);
@@ -82,10 +84,10 @@ public class ExaminationActivity extends Activity {
                 //TODO
                 //if (freqChecker != frequency) {
                 //'if' makes sure frequency changed before button was clicked
-                if (!rightEar && leftEar){
+                if (!rightEar && leftEar) {
                     stringBuilder.append("Left ear: For freq " + frequency + " mode is "
                             + (mode - 1) + "\n");
-                }else if (rightEar && !leftEar) {
+                } else if (rightEar && !leftEar) {
                     stringBuilder.append("Right ear: For freq " + frequency + " mode is "
                             + (mode - 1) + "\n");
                 }
@@ -116,10 +118,11 @@ public class ExaminationActivity extends Activity {
 
     private void VolumeUp(){
         // gets volumeChanger running every 'delay' seconds
+        int delay = 1000 * 4;
         handler.postDelayed(volumeChanger, delay);
     }
 
-    private Runnable volumeChanger = new Runnable() {
+    private final Runnable volumeChanger = new Runnable() {
         @Override
         public void run() {
 
@@ -192,7 +195,6 @@ public class ExaminationActivity extends Activity {
                     }
                     mode++;
 
-                    time++;
                     textview2.setText("toneGen.volume: " + String.valueOf(mode/10f));
                     textview3.setText("Amplitude: " + String.valueOf(amplitude));
                     textview4.setText("StreamVolume: " + String.valueOf(audioManager

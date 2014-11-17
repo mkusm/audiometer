@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">Audiometr</string>
     <string name="action_settings">Ustawienia</string>
-    <string name="exit_button_label">Wyjście</string>
     <string name="sound_hear_text_view">Dotknij, gdy usłyszysz dźwięk</string>
     <string name="title_activity_examination">Badanie</string>
     <string name="title_activity_how_to">Jak używać</string>
@@ -23,4 +22,5 @@
          \n3. Dotknij przycisk \'start\' aby zacząć badanie
          \n4. Dotknij przycisk na środku ekranu gdy usłyszysz dźwięk
          \n5. Wykres pokaże jak działa twój słuch</string>
+    <string name="how_to_text_view_label">Jak używać</string>
 </resources>
