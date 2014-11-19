@@ -14,7 +14,8 @@
     <string name="test_check_box_label">Ustawienie testowe</string>
     <string name="save_button_label">Zapisz</string>
     <string name="about_alert_title">info</string>
-    <string name="about_alert_message">Autor: Michał Kuśmierczyk</string>
+    <string name="about_alert_message">Autor: Michał Kuśmierczyk
+\nwersja</string>
     <string name="title_activity_graph">Wykres</string>
     <string name="graph_text_view_title">wykres</string>
     <string name="how_to_points_text_view">1. Podepnij słuchawki

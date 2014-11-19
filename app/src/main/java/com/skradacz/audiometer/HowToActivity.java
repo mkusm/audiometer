@@ -11,5 +11,4 @@ public class HowToActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_how_to);
     }
-
 }

@@ -13,12 +13,8 @@ import android.widget.TextView;
 
 public class ExaminationActivity extends Activity {
 
-    private TextView textview2;
-    private TextView textview3;
-    private TextView textview4;
-    private TextView textview5;
-    private TextView textview6;
-    private TextView textview7;
+    private TextView textview2, textview3, textview4, textview5, textview6, textview7;
+    private TextView clickHere;
 
     private AudioManager audioManager;
     private ToneGen toneGen;
@@ -34,7 +30,7 @@ public class ExaminationActivity extends Activity {
     private String result;
     private boolean rightEar = false;
     private boolean leftEar = false;
-//    public double freqChecker = 1;
+    private double freqChecker = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +38,7 @@ public class ExaminationActivity extends Activity {
         setContentView(R.layout.activity_examination);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        TextView clickHere = (TextView) findViewById(R.id.start_text_view);
+        clickHere = (TextView) findViewById(R.id.start_text_view);
         textview2 = (TextView) findViewById(R.id.textView2);
         textview3 = (TextView) findViewById(R.id.textView3);
         textview4 = (TextView) findViewById(R.id.textView4);
@@ -81,29 +77,30 @@ public class ExaminationActivity extends Activity {
         clickHere.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO
-                //if (freqChecker != frequency) {
-                //'if' makes sure frequency changed before button was clicked
-                if (!rightEar && leftEar) {
-                    stringBuilder.append("Left ear: For freq " + frequency + " mode is "
-                            + (mode - 1) + "\n");
-                } else if (rightEar && !leftEar) {
-                    stringBuilder.append("Right ear: For freq " + frequency + " mode is "
-                            + (mode - 1) + "\n");
+                if (freqChecker != frequency) {
+                    //'if' makes sure frequency changed before button was clicked
+                    if (!rightEar && leftEar) {
+                        stringBuilder.append("Left ear: For freq " + frequency + " mode is "
+                                + (mode - 1) + "\n");
+                    } else if (rightEar && !leftEar) {
+                        stringBuilder.append("Right ear: For freq " + frequency + " mode is "
+                                + (mode - 1) + "\n");
+                    }
+                    mode = 11;
+                    if (frequency == 8000 && rightEar) {
+                        result = stringBuilder.toString();
+                        AlertDialog.Builder builder = new AlertDialog.Builder(ExaminationActivity.this);
+                        builder.setTitle("RESULT");
+                        builder.setMessage(result);
+                        builder.setPositiveButton(android.R.string.ok, null);
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }
+                    toneGen.stop();
+
+                    clickHere.setClickable(false);
+                    freqChecker = frequency;
                 }
-                mode = 11;
-                if (frequency == 8000 && rightEar) {
-                    result = stringBuilder.toString();
-                    AlertDialog.Builder builder = new AlertDialog.Builder(ExaminationActivity.this);
-                    builder.setTitle("RESULT");
-                    builder.setMessage(result);
-                    builder.setPositiveButton(android.R.string.ok, null);
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
-                }
-                toneGen.stop();
-                //freqChecker = frequency;
-                //}
             }
         });
 
@@ -126,8 +123,9 @@ public class ExaminationActivity extends Activity {
         @Override
         public void run() {
 
-            if (!stop){
+            clickHere.setClickable(true);
 
+            if (!stop){
                 VolumeUp();
 
                 if (!rightEar && !leftEar) {
@@ -208,7 +206,6 @@ public class ExaminationActivity extends Activity {
                     toneGen.stop();
                 }
             }
-
         }
     };
 
@@ -224,5 +221,4 @@ public class ExaminationActivity extends Activity {
         super.onResume();
         stop = false;
     }
-
 }
