@@ -21,10 +21,10 @@
         \n2. Put headphones into your ears
         \n3. Tap on \'start\' to begin the examination
         \n4. Tap on the button in the middle of the screen when you hear the sound
-        \n5. The graph shows how your hearing works</string>
+        \n5. The result is shown at the end of the examination</string>
     <string name="title_activity_graph">Graph</string>
     <string name="graph_text_view_title">graph</string>
     <string name="how_to_text_view_label">How to</string>
-    <string name="version_number" translatable="false">0.1</string>
+    <string name="version_number" translatable="false">1.0</string>
 
 </resources>

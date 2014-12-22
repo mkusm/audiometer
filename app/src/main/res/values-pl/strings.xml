@@ -22,6 +22,6 @@
         \n2. Włóż słuchawki do uszu
          \n3. Dotknij przycisk \'start\' aby zacząć badanie
          \n4. Dotknij przycisk na środku ekranu gdy usłyszysz dźwięk
-         \n5. Wykres pokaże jak działa twój słuch</string>
+         \n5. Rezultat zostanie wyświetlony pod koniec badania</string>
     <string name="how_to_text_view_label">Jak używać</string>
 </resources>

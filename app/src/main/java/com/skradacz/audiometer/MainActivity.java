@@ -58,7 +58,7 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle(getString(R.string.about_alert_title));
-                builder.setMessage(getString(R.string.about_alert_message) + " " +getString(R.string.version_number));
+                builder.setMessage(getString(R.string.about_alert_message) + " " + getString(R.string.version_number));
                 builder.setPositiveButton(android.R.string.ok, null);
                 AlertDialog dialog = builder.create();
                 dialog.show();
