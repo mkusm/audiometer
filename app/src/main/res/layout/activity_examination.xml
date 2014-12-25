@@ -78,4 +78,13 @@
         android:layout_centerHorizontal="true"
         android:textColor="@android:color/primary_text_dark" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/test_number_text_view"
+        android:id="@+id/textView7"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textColor="@android:color/holo_green_light" />
+
 </RelativeLayout>
