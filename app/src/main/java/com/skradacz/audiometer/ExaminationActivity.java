@@ -19,23 +19,23 @@ import java.util.List;
 public class ExaminationActivity extends Activity {
 
     final Context context = this;
-    private static final String TAG = ToneGen.class.getSimpleName();
+    private static final String TAG = ExaminationActivity.class.getSimpleName();
 
     private TextView textview2, textview3, textview4, textview5, textview6, textview7, testInfoTextView;
     private TextView clickHere;
 
     private AudioManager audioManager;
-    private ToneGen toneGen;
+    private ToneGen2 toneGen;
     private final Handler handler = new Handler();
     private final StringBuilder stringBuilder = new StringBuilder();
     private final List<Integer> listLeftEar = new ArrayList<>();
     private final List<Integer> listRightEar = new ArrayList<>();
 
-    private double frequency = 250;                  // toneGen frequency
-    private final int duration = 6;                  // toneGen duration in seconds
-    private double amplitude = 1.0f;                 // toneGen amplitude
+    private double frequency = 0;                  // toneGen frequency
+    private double amplitude = 0;                 // toneGen amplitude
+    private double base = 0;
 
-    private int mode = 0;
+    private int mode = 11;
     private int textview7Counter = 1;
     private boolean stop = false;
     private String result;
@@ -59,6 +59,7 @@ public class ExaminationActivity extends Activity {
         testInfoTextView = (TextView) findViewById(R.id.testInfoTextView);
 
         audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+        toneGen = new ToneGen2(frequency, amplitude);
 
         Global global = ((Global)getApplicationContext());
         if (global.getTestChecked()) {
@@ -157,7 +158,9 @@ public class ExaminationActivity extends Activity {
                     toneGen.stop();
 
                     textview7Counter += 1;
-                    textview7.setText("Test " + textview7Counter + "/12");
+                    if (textview7Counter < 13) {
+                        textview7.setText("Test " + textview7Counter + "/12");
+                    }
 
                     clickHere.setClickable(false);
                     freqChecker = frequency;
@@ -165,20 +168,11 @@ public class ExaminationActivity extends Activity {
             }
         });
 
-        mode=1;
-        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 1, 0);
-        amplitude = 1.0;
-        frequency = 250;
-
-        toneGen = new ToneGen(frequency, duration, amplitude);
-        toneGen.play();
-        toneGen.volume(mode / 10f, 0.0f);
-
-        textview2.setText("toneGen.volume: " + String.valueOf(mode/10f));
+        textview2.setText("toneGen.volume: " + String.valueOf(0.1));
         textview3.setText("Amplitude: " + String.valueOf(amplitude));
         textview4.setText("StreamVolume: " + String.valueOf(audioManager.getStreamVolume(
                 AudioManager.STREAM_MUSIC)));
-        textview5.setText("mode: " + String.valueOf(mode-1));
+        textview5.setText("mode: " + String.valueOf(mode));
         textview6.setText("frequency: " + String.valueOf(frequency));
         testInfoTextView.setText("left ear: " + String.valueOf(leftEar) + " right ear: "
                 + String.valueOf(rightEar));
@@ -188,7 +182,7 @@ public class ExaminationActivity extends Activity {
 
     private void VolumeUp(){
         // gets volumeChanger running every 'delay' seconds
-        int delay = 1000 * 4;
+        int delay = 1000 * 3;
         handler.postDelayed(volumeChanger, delay);
     }
 
@@ -196,6 +190,7 @@ public class ExaminationActivity extends Activity {
         @Override
         public void run() {
 
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 5, 0);
             clickHere.setClickable(true);
 
             if (!stop){
@@ -206,12 +201,14 @@ public class ExaminationActivity extends Activity {
                     frequency = 250;
                 }
 
-                if (mode == 11) {
-                    mode = 0;
+                if (mode == 10 || mode == 11) {
+                    mode = -1;
                     if (frequency == 0){
                         frequency = 250;
+                        base = 0.71;
                     }else if (frequency == 250) {
                         frequency = 500;
+                        base = 0.65;
                         if (leftEar && !rightEar && listLeftEar.size()<1) {
                             listLeftEar.add(11);
                             textview7Counter =+ 1;
@@ -221,6 +218,7 @@ public class ExaminationActivity extends Activity {
                         }
                     }else if (frequency == 500) {
                         frequency = 1000;
+                        base = 0.65;
                         if (leftEar && !rightEar && listLeftEar.size()<2) {
                             listLeftEar.add(11);
                             textview7Counter =+ 1;
@@ -230,6 +228,7 @@ public class ExaminationActivity extends Activity {
                         }
                     }else if (frequency == 1000) {
                         frequency = 2000;
+                        base = 0.65;
                         if (leftEar && !rightEar && listLeftEar.size()<3) {
                             listLeftEar.add(11);
                             textview7Counter =+ 1;
@@ -239,6 +238,7 @@ public class ExaminationActivity extends Activity {
                         }
                     }else if (frequency == 2000) {
                         frequency = 4000;
+                        base = 0.72;
                         if (leftEar && !rightEar && listLeftEar.size()<4) {
                             listLeftEar.add(11);
                             textview7Counter =+ 1;
@@ -248,6 +248,7 @@ public class ExaminationActivity extends Activity {
                         }
                     }else if (frequency == 4000) {
                         frequency = 8000;
+                        base = 3;
                         if (leftEar && !rightEar && listLeftEar.size()<5) {
                             listLeftEar.add(11);
                             textview7Counter =+ 1;
@@ -267,6 +268,7 @@ public class ExaminationActivity extends Activity {
                             rightEar = true;
                             leftEar = false;
                             frequency = 250;
+                            base = 0.71;
                             stringBuilder.append(getString(R.string.details_right_ear_text));
                         }else if (rightEar && !leftEar){
                             leftEar = true;
@@ -279,41 +281,41 @@ public class ExaminationActivity extends Activity {
 
                 if (!stop){
 
-                    if (mode == 0) {
-                        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 1, 0);
-                        amplitude = 1.0;
-                    }else if (mode == 1) {
-                        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 1, 0);
-                        amplitude = 1.2;
-                    }else if (mode == 2) {
-                        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 1, 0);
-                        amplitude = 1.2;
-                    }else if (mode > 2 && mode < 9) {
-                        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 1, 0);
-                        amplitude = (Math.pow(2, mode-2));
-                    }else if (mode == 9){
-                        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 3, 0);
-                        amplitude = 128;
-                    }else if (mode == 10){
-                        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 6, 0);
-                        amplitude = 128;
-                    }
-
-                    toneGen.stop();
-                    toneGen = new ToneGen(frequency, duration, amplitude);
-                    toneGen.play();
-                    if (rightEar) {
-                        toneGen.volume(0.0f, mode/10f);
-                    }else if (leftEar) {
-                        toneGen.volume(mode/10f, 0.0f);
-                    }
                     mode++;
 
-                    textview2.setText("toneGen.volume: " + String.valueOf(mode/10f));
+                    if (mode == 0) {
+                        amplitude = 0.6;
+                    }else if (mode == 1) {
+                        amplitude = 0.7;
+                    }else if (mode == 2) {
+                        amplitude = 1.4;
+                    }else if (mode == 3) {
+                        amplitude = 3;
+                    }else if (mode > 3 && mode < 9) {
+                        amplitude = (Math.pow(2, mode-2));
+                    }else if (mode == 9) {
+                        amplitude = 64;
+                        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 7, 0);
+                    }else if (mode == 10) {
+                        amplitude = 64;
+                        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 9, 0);
+
+                    }
+                    amplitude = amplitude * base;
+                    toneGen.stop();
+                    toneGen = new ToneGen2(frequency, amplitude);
+                    toneGen.play();
+                    if (rightEar) {
+                        toneGen.volume(0.0f, 0.1f);
+                    }else if (leftEar) {
+                        toneGen.volume(0.1f, 0.0f);
+                    }
+
+                    textview2.setText("toneGen.volume: " + String.valueOf(0.1));
                     textview3.setText("Amplitude: " + String.valueOf(amplitude));
                     textview4.setText("StreamVolume: " + String.valueOf(audioManager
                             .getStreamVolume(AudioManager.STREAM_MUSIC)));
-                    textview5.setText("mode: " + String.valueOf(mode-1));
+                    textview5.setText("mode: " + String.valueOf(mode));
                     textview6.setText("frequency: " + String.valueOf(frequency));
                     testInfoTextView.setText("left ear: " + String.valueOf(leftEar) + " right ear: "
                             + String.valueOf(rightEar));

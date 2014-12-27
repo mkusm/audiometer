@@ -30,9 +30,9 @@
     <string name="details_right_ear_text">Prawe ucho:\n</string>
     <string name="details_left_ear_text">Lewe ucho:\n</string>
     <string name="details_freq_text">"częst.: "</string>
-    <string name="result_dialog_hearing_loss_text">Nie wykryto ubytków słuchu.
+    <string name="result_dialog_hearing_loss_text">"Nie wykryto ubytków słuchu.
 
-Pamiętaj, że nie jest to profesjonalne badanie. W razie wątpliwości, skontaktuj się z lekarzem.</string><string name="result_dialog_no_hearing_loss_text">Wykryto ubytek słuchu.
+Pamiętaj, że nie jest to profesjonalne badanie. W razie wątpliwości, skontaktuj się z lekarzem."</string><string name="result_dialog_no_hearing_loss_text">Możliwe, że twój słuch nie jest w pełni zdrowy!
 
 Skontaktuj się z lekarzem.</string>
 </resources>

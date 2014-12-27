@@ -25,7 +25,7 @@
     <string name="title_activity_graph">Graph</string>
     <string name="graph_text_view_title">graph</string>
     <string name="how_to_text_view_label">How to</string>
-    <string name="version_number" translatable="false">1.1</string>
+    <string name="version_number" translatable="false">1.2</string>
     <string name="results_dialog_negative_button_text">Details</string>
     <string name="results_dialog_title_text">Result</string>
     <string name="ok_button_text" translatable="false">Ok</string>
@@ -34,7 +34,7 @@
     <string name="details_left_ear_text">Left ear:\n</string>
     <string name="details_right_ear_text">Right ear:\n</string>
     <string name="test_number_text_view" translatable="false">Test 1/12</string>
-    <string name="result_dialog_no_hearing_loss_text">Hearing loss found.
+    <string name="result_dialog_no_hearing_loss_text">You may suffer from hearing loss!
 
 Please, contact your doctor.</string>
     <string name="result_dialog_hearing_loss_text">No hearing loss found.
