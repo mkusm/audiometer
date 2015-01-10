@@ -21,17 +21,18 @@ public class ExaminationActivity extends Activity {
     final Context context = this;
     private static final String TAG = ExaminationActivity.class.getSimpleName();
 
-    private TextView textview2, textview3, textview4, textview5, textview6, textview7, testInfoTextView;
+    private TextView textview2, textview3, textview4, textview5, textview6, textview7,
+            testInfoTextView;
     private TextView clickHere;
 
     private AudioManager audioManager;
-    private ToneGen2 toneGen;
+    private ToneGen toneGen;
     private final Handler handler = new Handler();
     private final StringBuilder stringBuilder = new StringBuilder();
     private final List<Integer> listLeftEar = new ArrayList<>();
     private final List<Integer> listRightEar = new ArrayList<>();
 
-    private double frequency = 0;                  // toneGen frequency
+    private double frequency = 0;                 // toneGen frequency
     private double amplitude = 0;                 // toneGen amplitude
     private double base = 0;
 
@@ -59,7 +60,7 @@ public class ExaminationActivity extends Activity {
         testInfoTextView = (TextView) findViewById(R.id.testInfoTextView);
 
         audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-        toneGen = new ToneGen2(frequency, amplitude);
+        toneGen = new ToneGen(frequency, amplitude);
 
         Global global = ((Global)getApplicationContext());
         if (global.getTestChecked()) {
@@ -87,7 +88,7 @@ public class ExaminationActivity extends Activity {
                     //'if' makes sure frequency changed before button was clicked
                     if (!rightEar && leftEar) {
                         stringBuilder.append(getString(R.string.details_freq_text) + frequency + getString(R.string.details_threshold_text)
-                                + (mode - 1) + "\n");
+                                + (mode) + "\n");
                         try{
                             listLeftEar.add(mode - 1);
                         }catch (Exception e) {
@@ -95,7 +96,7 @@ public class ExaminationActivity extends Activity {
                         }
                     } else if (rightEar && !leftEar) {
                         stringBuilder.append(getString(R.string.details_freq_text) + frequency + getString(R.string.details_threshold_text)
-                                + (mode - 1) + "\n");
+                                + (mode) + "\n");
                         try{
                             listRightEar.add(mode - 1);
                         }catch (Exception e) {
@@ -118,8 +119,8 @@ public class ExaminationActivity extends Activity {
                                 })
                                 .setNegativeButton(getString(R.string.results_dialog_negative_button_text), new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                                                context);
+                                        AlertDialog.Builder alertDialogBuilder = new AlertDialog
+                                                .Builder(context);
 
                                         alertDialogBuilder
                                                 .setTitle(getString(R.string.results_dialog_negative_button_text))
@@ -145,9 +146,11 @@ public class ExaminationActivity extends Activity {
                                     (listMax(listRightEar) - listMin(listRightEar)) > 3 ||
                                     (listMax(listRightEar) - listMin(listRightEar)) < -3
                                     ) {
-                                builder.setMessage(getString(R.string.result_dialog_no_hearing_loss_text));
+                                builder.setMessage(getString(
+                                        R.string.result_dialog_no_hearing_loss_text));
                             } else {
-                                builder.setMessage(getString(R.string.result_dialog_hearing_loss_text));
+                                builder.setMessage(getString(
+                                        R.string.result_dialog_hearing_loss_text));
                             }
                         }
 
@@ -177,6 +180,8 @@ public class ExaminationActivity extends Activity {
         testInfoTextView.setText("left ear: " + String.valueOf(leftEar) + " right ear: "
                 + String.valueOf(rightEar));
 
+        clickHere.setClickable(false);
+
         VolumeUp();
     }
 
@@ -205,10 +210,10 @@ public class ExaminationActivity extends Activity {
                     mode = -1;
                     if (frequency == 0){
                         frequency = 250;
-                        base = 0.71;
+                        base = 0.61;
                     }else if (frequency == 250) {
                         frequency = 500;
-                        base = 0.65;
+                        base = 0.609;
                         if (leftEar && !rightEar && listLeftEar.size()<1) {
                             listLeftEar.add(11);
                             textview7Counter =+ 1;
@@ -218,7 +223,7 @@ public class ExaminationActivity extends Activity {
                         }
                     }else if (frequency == 500) {
                         frequency = 1000;
-                        base = 0.65;
+                        base = 0.609;
                         if (leftEar && !rightEar && listLeftEar.size()<2) {
                             listLeftEar.add(11);
                             textview7Counter =+ 1;
@@ -228,7 +233,7 @@ public class ExaminationActivity extends Activity {
                         }
                     }else if (frequency == 1000) {
                         frequency = 2000;
-                        base = 0.65;
+                        base = 0.61;
                         if (leftEar && !rightEar && listLeftEar.size()<3) {
                             listLeftEar.add(11);
                             textview7Counter =+ 1;
@@ -238,7 +243,7 @@ public class ExaminationActivity extends Activity {
                         }
                     }else if (frequency == 2000) {
                         frequency = 4000;
-                        base = 0.72;
+                        base = 0.619;
                         if (leftEar && !rightEar && listLeftEar.size()<4) {
                             listLeftEar.add(11);
                             textview7Counter =+ 1;
@@ -248,7 +253,7 @@ public class ExaminationActivity extends Activity {
                         }
                     }else if (frequency == 4000) {
                         frequency = 8000;
-                        base = 3;
+                        base = 2.121;
                         if (leftEar && !rightEar && listLeftEar.size()<5) {
                             listLeftEar.add(11);
                             textview7Counter =+ 1;
@@ -268,7 +273,7 @@ public class ExaminationActivity extends Activity {
                             rightEar = true;
                             leftEar = false;
                             frequency = 250;
-                            base = 0.71;
+                            base = 0.61;
                             stringBuilder.append(getString(R.string.details_right_ear_text));
                         }else if (rightEar && !leftEar){
                             leftEar = true;
@@ -303,7 +308,7 @@ public class ExaminationActivity extends Activity {
                     }
                     amplitude = amplitude * base;
                     toneGen.stop();
-                    toneGen = new ToneGen2(frequency, amplitude);
+                    toneGen = new ToneGen(frequency, amplitude);
                     toneGen.play();
                     if (rightEar) {
                         toneGen.volume(0.0f, 0.1f);

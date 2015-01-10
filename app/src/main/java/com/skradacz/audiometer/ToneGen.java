@@ -5,18 +5,18 @@ import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.util.Log;
 
-class ToneGen2 {
+class ToneGen {
 
     private final int sampleRate = 20000;
     private AudioTrack audioTrack;
-    private static final String TAG = ToneGen2.class.getSimpleName();
+    private static final String TAG = ToneGen.class.getSimpleName();
     private final int duration = 6; // seconds
     private final int numSamples = duration * sampleRate;
     @SuppressWarnings("FieldCanBeLocal")
     private final double sample[] = new double[numSamples];
     private final byte generatedSnd[] = new byte[2 * numSamples];
 
-    public ToneGen2(double frequency, double amplitude){
+    public ToneGen(double frequency, double amplitude){
         // fill out the array
         for (int i = 0; i < numSamples; ++i) {
             sample[i] = Math.sin(2 * Math.PI * i / (sampleRate/frequency));
