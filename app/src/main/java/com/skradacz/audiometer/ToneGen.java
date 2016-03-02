@@ -7,17 +7,16 @@ import android.util.Log;
 
 class ToneGen {
 
-    private final int sampleRate = 20000;
     private AudioTrack audioTrack;
     private static final String TAG = ToneGen.class.getSimpleName();
+    private final int sampleRate = 20000;
     private final int duration = 6; // seconds
     private final int numSamples = duration * sampleRate;
-    @SuppressWarnings("FieldCanBeLocal")
-    private final double sample[] = new double[numSamples];
     private final byte generatedSnd[] = new byte[2 * numSamples];
 
     public ToneGen(double frequency, double amplitude){
         // fill out the array
+        double[] sample = new double[numSamples];
         for (int i = 0; i < numSamples; ++i) {
             sample[i] = Math.sin(2 * Math.PI * i / (sampleRate/frequency));
         }
@@ -36,10 +35,9 @@ class ToneGen {
     }
 
     public void play(){
-        audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC,
-                sampleRate, AudioFormat.CHANNEL_OUT_MONO,
-                AudioFormat.ENCODING_PCM_16BIT, generatedSnd.length,
-                AudioTrack.MODE_STATIC);
+        audioTrack = new AudioTrack(
+                AudioManager.STREAM_MUSIC, sampleRate, AudioFormat.CHANNEL_OUT_MONO,
+                AudioFormat.ENCODING_PCM_16BIT, generatedSnd.length, AudioTrack.MODE_STATIC);
         audioTrack.write(generatedSnd, 0, generatedSnd.length);
         audioTrack.play();
     }
@@ -54,10 +52,9 @@ class ToneGen {
     }
 
     public void volume(float leftVolume, float rightVolume){
-
        /**
-        * @param leftVolume Left volume 0.0f - silent, 1.0f full volume
-        * @param rightVolume Right volume 0.0f - silent, 1.0f full volume
+        * @param leftVolume Left volume 0.0f - silent, 1.0f - full volume
+        * @param rightVolume Right volume 0.0f - silent, 1.0f - full volume
         */
 
         //noinspection deprecation

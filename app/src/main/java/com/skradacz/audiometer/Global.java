@@ -6,7 +6,7 @@ import android.graphics.Color;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GraphViewSeries;
 
-@SuppressWarnings("WeakerAccess")
+
 public class Global extends Application {
     private boolean isTestChecked = false;
     public boolean getTestChecked(){
@@ -23,9 +23,11 @@ public class Global extends Application {
             new GraphView.GraphViewData(2000, 1),
             new GraphView.GraphViewData(4000, 4)
     });
+
     public void setLeftEarSeries(GraphViewSeries leftEarSeries) {
         this.leftEarSeries = leftEarSeries;
     }
+
     public GraphViewSeries getLeftEarSeries() {
         return leftEarSeries;
     }
@@ -40,6 +42,7 @@ public class Global extends Application {
     public void setRightEarSeries(GraphViewSeries rightEarSeries) {
         this.rightEarSeries = rightEarSeries;
     }
+
     public GraphViewSeries getRightEarSeries() {
         return rightEarSeries;
     }
