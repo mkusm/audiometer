@@ -27,7 +27,7 @@ public class ExaminationActivity extends Activity {
     private TextView currentToneGenVolumeTextView, currentAmplitudeTextView,
             currentStreamVolumeTextView, currentModeTextView, currentFrequencyTextView,
             currentTestNumberTextView, currentEarExaminedTextView;
-    private TextView clickHereToStartTextView;
+    private TextView clickHereWhenYouHearTheSoundTextView;
 
     private AudioManager audioManager;
     private ToneGen toneGen;
@@ -54,7 +54,7 @@ public class ExaminationActivity extends Activity {
         setContentView(R.layout.activity_examination);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        clickHereToStartTextView = (TextView) findViewById(R.id.start_text_view);
+        clickHereWhenYouHearTheSoundTextView = (TextView) findViewById(R.id.hear_sound_text_view);
         currentToneGenVolumeTextView = (TextView) findViewById(R.id.textView2);
         currentAmplitudeTextView = (TextView) findViewById(R.id.textView3);
         currentStreamVolumeTextView = (TextView) findViewById(R.id.textView4);
@@ -77,7 +77,8 @@ public class ExaminationActivity extends Activity {
         // the examination. The examination start with left ear.
         examinationResultDetailsBuilder.append(getString(R.string.details_left_ear_text));
 
-        clickHereToStartTextView.setOnClickListener(new View.OnClickListener() {
+        // This button is the only button available during the examination.
+        clickHereWhenYouHearTheSoundTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -86,6 +87,11 @@ public class ExaminationActivity extends Activity {
                 if (previousFrequency == currentFrequency) {
                     return;
                 }
+
+                // User is not supposed to click the button for first three seconds of the new test,
+                // because there is no sound yet. Button is set back to clickable later in the code,
+                // once the volume has been increased for the first time.
+                clickHereWhenYouHearTheSoundTextView.setClickable(false);
 
                 // record the results of current test
                 if (!isCurrentlyRightEar && isCurrentlyLeftEar) {
@@ -108,17 +114,14 @@ public class ExaminationActivity extends Activity {
                 currentTestNumber += 1;
                 if (currentTestNumber < 13) {
                     currentTestNumberTextView.setText(
-                        String.format("Test %d/12", currentTestNumber));
+                            String.format("Test %d/12", currentTestNumber));
                 }
-
-                // user is not supposed to click the button for first three seconds of the new test,
-                // because there is no sound yet
-                clickHereToStartTextView.setClickable(false);
 
                 previousFrequency = currentFrequency;
             }
         });
 
+        clickHereWhenYouHearTheSoundTextView.setClickable(false);
         updateDebugTextViewsText();
         setNextVolumeLevelAfterThreeSeconds();
     }
@@ -127,7 +130,7 @@ public class ExaminationActivity extends Activity {
         try {
             list.add(currentMode - 1);
         } catch (Exception e) {
-            Log.d(TAG, "stop(), exception captured");
+            Log.d(TAG, "exception captured while adding to list");
         }
     }
 
@@ -248,15 +251,19 @@ public class ExaminationActivity extends Activity {
 
     /**
      * changes the volume based on currentMode and currentFrequency,
-     * then runs itself with 3 seconds delay
+     * then runs itself with 3 seconds delay if examination is not finished
      */
     private final Runnable volumeChanger = new Runnable() {
         @Override
         public void run() {
 
-            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 5, 0);
-            clickHereToStartTextView.setClickable(true);
 
+            // after the first volume increase, user is allowed to click the button
+            clickHereWhenYouHearTheSoundTextView.setClickable(true);
+
+            // isExaminationStopped is true if:
+            //  - user paused or left activity
+            //  - the examination ended (frequency 8000 and (button clicked or mode > 10))
             if (isExaminationStopped) {
                 return;
             }
@@ -341,12 +348,19 @@ public class ExaminationActivity extends Activity {
                     }
                     if (isCurrentlyRightEar && isCurrentlyLeftEar) {
                         toneGen.stop();
+                        isExaminationStopped = true;
                         return;
                     }
                 }
             }
 
+
             currentMode++;
+            // TODO create Modes table
+//            currentAmplitudeWithoutMultiplier = Modes[0][currentMode];
+//            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, Modes[1][currentMode], 0);
+
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 5, 0);
 
             if (currentMode == 0) {
                 currentAmplitudeWithoutMultiplier = 0.6;
@@ -367,6 +381,8 @@ public class ExaminationActivity extends Activity {
             }
             double currentAmplitudeWithMultiplier =
                     currentAmplitudeWithoutMultiplier * amplitudeMultiplier;
+
+
             toneGen.stop();
             toneGen = new ToneGen(currentFrequency, currentAmplitudeWithMultiplier);
             toneGen.play();

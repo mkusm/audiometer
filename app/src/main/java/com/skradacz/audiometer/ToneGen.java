@@ -35,7 +35,7 @@ class ToneGen {
     }
 
     public void play(){
-        audioTrack = new AudioTrack(
+        audioTrack = new AudioTrack (
                 AudioManager.STREAM_MUSIC, sampleRate, AudioFormat.CHANNEL_OUT_MONO,
                 AudioFormat.ENCODING_PCM_16BIT, generatedSnd.length, AudioTrack.MODE_STATIC);
         audioTrack.write(generatedSnd, 0, generatedSnd.length);
@@ -43,12 +43,10 @@ class ToneGen {
     }
 
     public void stop(){
-        try{
+        try {
             audioTrack.stop();
             audioTrack.release();
-        }catch(Exception e){
-            Log.d(TAG, "stop(), exception captured");
-        }
+        } catch (NullPointerException | IllegalStateException ignored) {}
     }
 
     public void volume(float leftVolume, float rightVolume){
