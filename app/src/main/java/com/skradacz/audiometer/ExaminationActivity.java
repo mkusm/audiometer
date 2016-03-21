@@ -46,6 +46,8 @@ public class ExaminationActivity extends Activity {
     private String examinationResultDetails;
     private boolean isCurrentlyRightEar = false;
     private boolean isCurrentlyLeftEar = true;
+    // examinationStatus  0 - not started, 1 - left ear, 2 - right ear, 3 - finished
+    private int examinationStatus = 0;
     private double previousFrequency = 1;
 
     @Override
@@ -94,10 +96,10 @@ public class ExaminationActivity extends Activity {
                 clickHereWhenYouHearTheSoundTextView.setClickable(false);
 
                 // record the results of current test
-                if (!isCurrentlyRightEar && isCurrentlyLeftEar) {
+                if (examinationStatus == 1 /*!isCurrentlyRightEar && isCurrentlyLeftEar */) {
                     appendFrequencyAndModeToResultDetailsBuilder();
                     addCurrentModeToEarList(leftEarHearingList);
-                } else if (isCurrentlyRightEar && !isCurrentlyLeftEar) {
+                } else if (examinationStatus == 2 /*isCurrentlyRightEar && !isCurrentlyLeftEar*/) {
                     appendFrequencyAndModeToResultDetailsBuilder();
                     addCurrentModeToEarList(rightEarHearingList);
                 }
@@ -233,20 +235,24 @@ public class ExaminationActivity extends Activity {
     /** gives debug mode text views current values of different volume settings */
     private void updateDebugTextViewsText() {
         currentToneGenVolumeTextView.setText(
-            String.format("toneGen.volume: %s", String.valueOf(0.1)));
+            String.format("toneGen.volume: %s", String.valueOf(0.1))
+        );
         currentAmplitudeTextView.setText(
-            String.format("Amplitude: %s", String.valueOf(currentAmplitudeWithoutMultiplier)));
+            String.format("Amplitude: %s", String.valueOf(currentAmplitudeWithoutMultiplier))
+        );
         currentStreamVolumeTextView.setText(
-            String.format("StreamVolume: %s", String.valueOf(
-                audioManager.getStreamVolume(AudioManager.STREAM_MUSIC))));
+            String.format("StreamVolume: %s",
+                          String.valueOf(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)))
+        );
         currentModeTextView.setText(
-            String.format("currentMode: %s", String.valueOf(currentMode)));
+            String.format("currentMode: %s", String.valueOf(currentMode))
+        );
         currentFrequencyTextView.setText(
-            String.format("currentFrequency: %s", String.valueOf(currentFrequency)));
+            String.format("currentFrequency: %s", String.valueOf(currentFrequency))
+        );
         currentEarExaminedTextView.setText(
-            String.format("left ear: %s right ear: %s",
-                String.valueOf(isCurrentlyLeftEar),
-                String.valueOf(isCurrentlyRightEar)));
+            String.format("examinationStatus: %s", String.valueOf(examinationStatus))
+        );
     }
 
     /**
@@ -256,7 +262,6 @@ public class ExaminationActivity extends Activity {
     private final Runnable volumeChanger = new Runnable() {
         @Override
         public void run() {
-
 
             // after the first volume increase, user is allowed to click the button
             clickHereWhenYouHearTheSoundTextView.setClickable(true);
@@ -270,8 +275,9 @@ public class ExaminationActivity extends Activity {
 
             setNextVolumeLevelAfterThreeSeconds();
 
-            if (!isCurrentlyRightEar && !isCurrentlyLeftEar) {
-                isCurrentlyLeftEar = true;
+            if (examinationStatus == 0 /*!isCurrentlyRightEar && !isCurrentlyLeftEar*/) {
+//                isCurrentlyLeftEar = true;
+                examinationStatus = 1;
                 currentFrequency = 250;
             }
             if (currentMode == 10 || currentMode == 11) {
@@ -282,71 +288,35 @@ public class ExaminationActivity extends Activity {
                 } else if (currentFrequency == 250) {
                     currentFrequency = 500;
                     amplitudeMultiplier = 0.609;
-                    if (isCurrentlyLeftEar && !isCurrentlyRightEar && leftEarHearingList.size()<1) {
-                        leftEarHearingList.add(11);
-                        currentTestNumber =+ 1;
-                    } else if (!isCurrentlyLeftEar && isCurrentlyRightEar && rightEarHearingList.size()<1) {
-                        rightEarHearingList.add(11);
-                        currentTestNumber =+ 1;
-                    }
+                    appendResultToHearingList(1);
                 } else if (currentFrequency == 500) {
                     currentFrequency = 1000;
                     amplitudeMultiplier = 0.609;
-                    if (isCurrentlyLeftEar && !isCurrentlyRightEar && leftEarHearingList.size()<2) {
-                        leftEarHearingList.add(11);
-                        currentTestNumber =+ 1;
-                    } else if (!isCurrentlyLeftEar && isCurrentlyRightEar && rightEarHearingList.size()<2) {
-                        rightEarHearingList.add(11);
-                        currentTestNumber =+ 1;
-                    }
+                    appendResultToHearingList(2);
                 } else if (currentFrequency == 1000) {
                     currentFrequency = 2000;
                     amplitudeMultiplier = 0.61;
-                    if (isCurrentlyLeftEar && !isCurrentlyRightEar && leftEarHearingList.size()<3) {
-                        leftEarHearingList.add(11);
-                        currentTestNumber =+ 1;
-                    } else if (!isCurrentlyLeftEar && isCurrentlyRightEar && rightEarHearingList.size()<3) {
-                        rightEarHearingList.add(11);
-                        currentTestNumber =+ 1;
-                    }
+                    appendResultToHearingList(3);
                 } else if (currentFrequency == 2000) {
                     currentFrequency = 4000;
                     amplitudeMultiplier = 0.619;
-                    if (isCurrentlyLeftEar && !isCurrentlyRightEar && leftEarHearingList.size()<4) {
-                        leftEarHearingList.add(11);
-                        currentTestNumber =+ 1;
-                    } else if (!isCurrentlyLeftEar && isCurrentlyRightEar && rightEarHearingList.size()<4) {
-                        rightEarHearingList.add(11);
-                        currentTestNumber =+ 1;
-                    }
+                    appendResultToHearingList(4);
                 } else if (currentFrequency == 4000) {
                     currentFrequency = 8000;
                     amplitudeMultiplier = 2.121;
-                    if (isCurrentlyLeftEar && !isCurrentlyRightEar && leftEarHearingList.size()<5) {
-                        leftEarHearingList.add(11);
-                        currentTestNumber =+ 1;
-                    } else if (!isCurrentlyLeftEar && isCurrentlyRightEar && rightEarHearingList.size()<5) {
-                        rightEarHearingList.add(11);
-                        currentTestNumber =+ 1;
-                    }
+                    appendResultToHearingList(5);
                 } else if (currentFrequency == 8000) {
-                    if (isCurrentlyLeftEar && !isCurrentlyRightEar && leftEarHearingList.size()<6) {
-                        leftEarHearingList.add(11);
-                        currentTestNumber =+ 1;
-                    } else if (!isCurrentlyLeftEar && isCurrentlyRightEar && rightEarHearingList.size()<6) {
-                        rightEarHearingList.add(11);
-                        currentTestNumber =+ 1;
-                    }
-                    if (!isCurrentlyRightEar && isCurrentlyLeftEar) {
-                        isCurrentlyRightEar = true;
-                        isCurrentlyLeftEar = false;
+                    appendResultToHearingList(6);
+                    if (examinationStatus == 1 /*!isCurrentlyRightEar && isCurrentlyLeftEar*/) {
+                        examinationStatus = 2;
                         currentFrequency = 250;
                         amplitudeMultiplier = 0.61;
                         examinationResultDetailsBuilder.append(getString(R.string.details_right_ear_text));
-                    } else if (isCurrentlyRightEar && !isCurrentlyLeftEar){
-                        isCurrentlyLeftEar = true;
+                    } else if (examinationStatus == 2 /*isCurrentlyRightEar && !isCurrentlyLeftEar*/){
+//                        isCurrentlyLeftEar = true;
+                        examinationStatus = 3;
                     }
-                    if (isCurrentlyRightEar && isCurrentlyLeftEar) {
+                    if (examinationStatus == 3 /*isCurrentlyRightEar && isCurrentlyLeftEar*/) {
                         toneGen.stop();
                         isExaminationStopped = true;
                         return;
@@ -394,6 +364,16 @@ public class ExaminationActivity extends Activity {
 
             updateDebugTextViewsText();
         }
+
+        private void appendResultToHearingList(int maxHearingListSize) {
+            if (examinationStatus == 1 /*isCurrentlyLeftEar && !isCurrentlyRightEar*/ && leftEarHearingList.size()<maxHearingListSize) {
+                leftEarHearingList.add(11);
+                currentTestNumber =+ 1;
+            } else if (examinationStatus == 2 /*!isCurrentlyLeftEar && isCurrentlyRightEar*/ && rightEarHearingList.size()<maxHearingListSize) {
+                rightEarHearingList.add(11);
+                currentTestNumber =+ 1;
+            }
+        }
     };
 
     static public int listMin(List array) {
@@ -427,11 +407,13 @@ public class ExaminationActivity extends Activity {
         super.onPause();
         toneGen.stop();
         isExaminationStopped = true;
+        examinationStatus = 0;
     }
 
     @Override
     public void onResume(){
         super.onResume();
         isExaminationStopped = false;
+        examinationStatus = 0;
     }
 }
