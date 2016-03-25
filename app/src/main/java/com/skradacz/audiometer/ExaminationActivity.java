@@ -94,18 +94,11 @@ public class ExaminationActivity extends Activity {
                 clickHereWhenYouHearTheSoundTextView.setClickable(false);
 
                 // record the results of current test
-                if (examinationStatus == 1) {
-                    appendFrequencyAndModeToResultDetailsBuilder();
-                    addCurrentModeToEarList(leftEarHearingList);
-                } else if (examinationStatus == 2) {
-                    appendFrequencyAndModeToResultDetailsBuilder();
-                    addCurrentModeToEarList(rightEarHearingList);
-                }
+                saveCurrentFrequencyAndCurrentMode();
 
                 // inform volumeChanger that current test is done
                 currentMode = 11;
                 if (currentFrequency == 8000 && (examinationStatus == 2 || examinationStatus == 3)) {
-                    examinationResultDetails = examinationResultDetailsBuilder.toString();
                     showExaminationResultAlertDialog();
                 }
                 toneGen.stop();
@@ -147,6 +140,7 @@ public class ExaminationActivity extends Activity {
      * could be a potential hearing loss or not. Also, provides a button to check detailed result.
      */
     private void showExaminationResultAlertDialog() {
+        examinationResultDetails = examinationResultDetailsBuilder.toString();
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder
             .setTitle(getString(R.string.results_dialog_title_text))
@@ -272,10 +266,13 @@ public class ExaminationActivity extends Activity {
 
             setNextVolumeLevelAfterThreeSeconds();
 
-            // TODO bug - if click here not clicked and test moves on its own, result is not added to the final detailed result
-            // TODO also, if some button is never clicked, then hearing is lost for sure
+            // TODO bug - if some button is never clicked, then hearing is lost for sure. show that!
             if (examinationStatus == 0) {
                 examinationStatus = 1;
+            }
+            if (currentMode == 10) {
+                currentMode++;
+                saveCurrentFrequencyAndCurrentMode();
             }
             if (currentMode == 10 || currentMode == 11) {
                 currentMode = -1;
@@ -315,6 +312,7 @@ public class ExaminationActivity extends Activity {
                     if (examinationStatus == 3) {
                         toneGen.stop();
                         isExaminationStopped = true;
+                        showExaminationResultAlertDialog();
                         return;
                     }
                 }
@@ -352,12 +350,11 @@ public class ExaminationActivity extends Activity {
             toneGen.stop();
             toneGen = new ToneGen(currentFrequency, currentAmplitudeWithMultiplier);
             toneGen.play();
-            if (examinationStatus == 2) {
-                toneGen.setVolume(0.0f, 0.1f);
-            }else if (examinationStatus == 1) {
+            if (examinationStatus == 1) {
                 toneGen.setVolume(0.1f, 0.0f);
+            } else if (examinationStatus == 2) {
+                toneGen.setVolume(0.0f, 0.1f);
             }
-
             updateDebugTextViewsText();
         }
 
@@ -371,6 +368,16 @@ public class ExaminationActivity extends Activity {
             }
         }
     };
+
+    private void saveCurrentFrequencyAndCurrentMode() {
+        if (examinationStatus == 1) {
+            appendFrequencyAndModeToResultDetailsBuilder();
+            addCurrentModeToEarList(leftEarHearingList);
+        } else if (examinationStatus == 2) {
+            appendFrequencyAndModeToResultDetailsBuilder();
+            addCurrentModeToEarList(rightEarHearingList);
+        }
+    }
 
     static public int listMin(List array) {
         // Takes a list of integers as an input, and returns the lowest value
