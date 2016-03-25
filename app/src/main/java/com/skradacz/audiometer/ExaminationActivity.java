@@ -47,6 +47,7 @@ public class ExaminationActivity extends Activity {
     // examinationStatus  0 - not started, 1 - left ear, 2 - right ear, 3 - finished
     private int examinationStatus = 0;
     private double previousFrequency = 1;
+    private boolean hearingLossOutOfRange = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -175,6 +176,9 @@ public class ExaminationActivity extends Activity {
      * @return boolean
      */
     private boolean isHearingLost() {
+        if (hearingLossOutOfRange) {
+            return true;
+        }
         for (int i = 0; i < 6; i++) {
             if (Math.abs(leftEarHearingList.get(i) - rightEarHearingList.get(i)) > 2) {
                 return true;
@@ -266,11 +270,11 @@ public class ExaminationActivity extends Activity {
 
             setNextVolumeLevelAfterThreeSeconds();
 
-            // TODO bug - if some button is never clicked, then hearing is lost for sure. show that!
             if (examinationStatus == 0) {
                 examinationStatus = 1;
             }
             if (currentMode == 10) {
+                hearingLossOutOfRange = true;
                 currentMode++;
                 saveCurrentFrequencyAndCurrentMode();
             }
