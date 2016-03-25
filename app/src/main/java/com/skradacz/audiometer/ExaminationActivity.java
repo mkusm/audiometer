@@ -44,8 +44,6 @@ public class ExaminationActivity extends Activity {
     private int currentTestNumber = 1;
     private boolean isExaminationStopped = false;
     private String examinationResultDetails;
-    private boolean isCurrentlyRightEar = false;
-    private boolean isCurrentlyLeftEar = true;
     // examinationStatus  0 - not started, 1 - left ear, 2 - right ear, 3 - finished
     private int examinationStatus = 0;
     private double previousFrequency = 1;
@@ -96,17 +94,17 @@ public class ExaminationActivity extends Activity {
                 clickHereWhenYouHearTheSoundTextView.setClickable(false);
 
                 // record the results of current test
-                if (examinationStatus == 1 /*!isCurrentlyRightEar && isCurrentlyLeftEar */) {
+                if (examinationStatus == 1) {
                     appendFrequencyAndModeToResultDetailsBuilder();
                     addCurrentModeToEarList(leftEarHearingList);
-                } else if (examinationStatus == 2 /*isCurrentlyRightEar && !isCurrentlyLeftEar*/) {
+                } else if (examinationStatus == 2) {
                     appendFrequencyAndModeToResultDetailsBuilder();
                     addCurrentModeToEarList(rightEarHearingList);
                 }
 
                 // inform volumeChanger that current test is done
                 currentMode = 11;
-                if (currentFrequency == 8000 && isCurrentlyRightEar) {
+                if (currentFrequency == 8000 && (examinationStatus == 2 || examinationStatus == 3)) {
                     examinationResultDetails = examinationResultDetailsBuilder.toString();
                     showExaminationResultAlertDialog();
                 }
@@ -115,8 +113,7 @@ public class ExaminationActivity extends Activity {
                 // inform user about new test start
                 currentTestNumber += 1;
                 if (currentTestNumber < 13) {
-                    currentTestNumberTextView.setText(
-                            String.format("Test %d/12", currentTestNumber));
+                    currentTestNumberTextView.setText(String.format("Test %d/12", currentTestNumber));
                 }
 
                 previousFrequency = currentFrequency;
@@ -235,7 +232,7 @@ public class ExaminationActivity extends Activity {
     /** gives debug mode text views current values of different volume settings */
     private void updateDebugTextViewsText() {
         currentToneGenVolumeTextView.setText(
-            String.format("toneGen.volume: %s", String.valueOf(0.1))
+            String.format("toneGen.setVolume: %s", String.valueOf(0.1))
         );
         currentAmplitudeTextView.setText(
             String.format("Amplitude: %s", String.valueOf(currentAmplitudeWithoutMultiplier))
@@ -275,14 +272,14 @@ public class ExaminationActivity extends Activity {
 
             setNextVolumeLevelAfterThreeSeconds();
 
-            if (examinationStatus == 0 /*!isCurrentlyRightEar && !isCurrentlyLeftEar*/) {
-//                isCurrentlyLeftEar = true;
+            // TODO bug - if click here not clicked and test moves on its own, result is not added to the final detailed result
+            // TODO also, if some button is never clicked, then hearing is lost for sure
+            if (examinationStatus == 0) {
                 examinationStatus = 1;
-                currentFrequency = 250;
             }
             if (currentMode == 10 || currentMode == 11) {
                 currentMode = -1;
-                if (currentFrequency == 0){
+                if (currentFrequency == 0) {
                     currentFrequency = 250;
                     amplitudeMultiplier = 0.61;
                 } else if (currentFrequency == 250) {
@@ -307,16 +304,15 @@ public class ExaminationActivity extends Activity {
                     appendResultToHearingList(5);
                 } else if (currentFrequency == 8000) {
                     appendResultToHearingList(6);
-                    if (examinationStatus == 1 /*!isCurrentlyRightEar && isCurrentlyLeftEar*/) {
+                    if (examinationStatus == 1) {
                         examinationStatus = 2;
                         currentFrequency = 250;
                         amplitudeMultiplier = 0.61;
                         examinationResultDetailsBuilder.append(getString(R.string.details_right_ear_text));
-                    } else if (examinationStatus == 2 /*isCurrentlyRightEar && !isCurrentlyLeftEar*/){
-//                        isCurrentlyLeftEar = true;
+                    } else if (examinationStatus == 2){
                         examinationStatus = 3;
                     }
-                    if (examinationStatus == 3 /*isCurrentlyRightEar && isCurrentlyLeftEar*/) {
+                    if (examinationStatus == 3) {
                         toneGen.stop();
                         isExaminationStopped = true;
                         return;
@@ -356,20 +352,20 @@ public class ExaminationActivity extends Activity {
             toneGen.stop();
             toneGen = new ToneGen(currentFrequency, currentAmplitudeWithMultiplier);
             toneGen.play();
-            if (isCurrentlyRightEar) {
-                toneGen.volume(0.0f, 0.1f);
-            }else if (isCurrentlyLeftEar) {
-                toneGen.volume(0.1f, 0.0f);
+            if (examinationStatus == 2) {
+                toneGen.setVolume(0.0f, 0.1f);
+            }else if (examinationStatus == 1) {
+                toneGen.setVolume(0.1f, 0.0f);
             }
 
             updateDebugTextViewsText();
         }
 
         private void appendResultToHearingList(int maxHearingListSize) {
-            if (examinationStatus == 1 /*isCurrentlyLeftEar && !isCurrentlyRightEar*/ && leftEarHearingList.size()<maxHearingListSize) {
+            if (examinationStatus == 1 && leftEarHearingList.size() < maxHearingListSize) {
                 leftEarHearingList.add(11);
                 currentTestNumber =+ 1;
-            } else if (examinationStatus == 2 /*!isCurrentlyLeftEar && isCurrentlyRightEar*/ && rightEarHearingList.size()<maxHearingListSize) {
+            } else if (examinationStatus == 2 && rightEarHearingList.size() < maxHearingListSize) {
                 rightEarHearingList.add(11);
                 currentTestNumber =+ 1;
             }

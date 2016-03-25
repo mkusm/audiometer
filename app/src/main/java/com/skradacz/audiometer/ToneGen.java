@@ -49,7 +49,7 @@ class ToneGen {
         } catch (NullPointerException | IllegalStateException ignored) {}
     }
 
-    public void volume(float leftVolume, float rightVolume){
+    public void setVolume(float leftVolume, float rightVolume){
        /**
         * @param leftVolume Left volume 0.0f - silent, 1.0f - full volume
         * @param rightVolume Right volume 0.0f - silent, 1.0f - full volume
