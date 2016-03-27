@@ -57,8 +57,8 @@ public class ExaminationActivity extends Activity {
     private int currentTestNumber = 1;
     private boolean isExaminationStopped = false;
     private String examinationResultDetails;
-    // examinationStatus  0 - not started, 1 - left ear, 2 - right ear
-    private int examinationStatus = 0;
+    private int currentEar = 1;  // 1 - left ear, 2 - right ear
+    private boolean examinationStarted = false;
     private double previousFrequency = 1;
     private boolean hearingLossOutOfRange = false;
 
@@ -76,13 +76,18 @@ public class ExaminationActivity extends Activity {
         currentFrequencyTextView = (TextView) findViewById(R.id.textView6);
         currentTestNumberTextView = (TextView) findViewById(R.id.textView7);
         currentEarExaminedTextView = (TextView) findViewById(R.id.testInfoTextView);
+
         audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
         toneGen = new ToneGen(currentFrequency, currentAmplitudeWithoutMultiplier);
+        clickHereWhenYouHearTheSoundTextView.setClickable(false);
+        setNextVolumeLevelAfterThreeSeconds();
+        examinationResultDetailsBuilder.append(getString(R.string.details_left_ear_text));
 
         // For Debug Mode
         Global global = ((Global)getApplicationContext());
         if (global.getTestChecked()) {
             setDebugTextViewsVisibility(View.VISIBLE);
+            updateDebugTextViewsText();
         } else {
             setDebugTextViewsVisibility(View.INVISIBLE);
         }
@@ -108,9 +113,8 @@ public class ExaminationActivity extends Activity {
 
                 // inform volumeChanger that current test is done
                 currentMode = 11;
-                if (currentFrequency == 8000 && examinationStatus == 2) {
-                    isExaminationStopped = true;
-                    showExaminationResultAlertDialog();
+                if (currentFrequency == 8000 && currentEar == 2) {
+                    finishExamination();
                 }
                 toneGen.stop();
 
@@ -123,18 +127,12 @@ public class ExaminationActivity extends Activity {
                 previousFrequency = currentFrequency;
             }
         });
-
-        clickHereWhenYouHearTheSoundTextView.setClickable(false);
-        updateDebugTextViewsText();
-        setNextVolumeLevelAfterThreeSeconds();
     }
 
-    private void addCurrentModeToEarList(List<Integer> list) {
-        try {
-            list.add(currentMode - 1);
-        } catch (Exception e) {
-            Log.d(TAG, "exception captured while adding to list");
-        }
+    private void finishExamination() {
+        toneGen.stop();
+        isExaminationStopped = true;
+        showExaminationResultAlertDialog();
     }
 
     private void appendFrequencyAndModeToResultDetailsBuilder() {
@@ -256,7 +254,7 @@ public class ExaminationActivity extends Activity {
             String.format("currentFrequency: %s", String.valueOf(currentFrequency))
         );
         currentEarExaminedTextView.setText(
-            String.format("examinationStatus: %s", String.valueOf(examinationStatus))
+            String.format("currentEar: %s", String.valueOf(currentEar))
         );
     }
 
@@ -287,30 +285,31 @@ public class ExaminationActivity extends Activity {
                 currentMode++;
                 saveCurrentFrequencyAndCurrentMode();
             }
+            
+            int currentFrequencyIndex = Arrays.asList(FREQUENCIES).indexOf(currentFrequency);
 
+            // this block changes frequency after clicking button or after all modes passed
             if (currentMode == 11) {
                 currentMode = -1;
-                if (currentFrequency == 8000) {
-                    currentFrequency = 250;
-                    if (examinationStatus == 0) {
-                        examinationStatus++;
-                        examinationResultDetailsBuilder.append(getString(R.string.details_left_ear_text));
-                    } else if (examinationStatus == 1) {
+                if (currentFrequency == FREQUENCIES[FREQUENCIES.length - 1]) {
+                    currentFrequency = FREQUENCIES[0];
+                    if (examinationStarted) {
                         appendResultToHearingList(6);
-                        examinationStatus++;
-                        examinationResultDetailsBuilder.append(getString(R.string.details_right_ear_text));
-                    } else if (examinationStatus == 2) {
-                        appendResultToHearingList(6);
-                        toneGen.stop();
-                        isExaminationStopped = true;
-                        showExaminationResultAlertDialog();
-                        return;
+                        if (currentEar == 1) {
+                            // move to right ear
+                            currentEar++;
+                            examinationResultDetailsBuilder.append(getString(R.string.details_right_ear_text));
+                        } else {
+                            // finish examination
+                            finishExamination();
+                            return;
+                        }
+                    } else {
+                        examinationStarted = true;
                     }
                 } else {
-                    // this block changes frequency after clicking button or after all modes passed
-                    int index = Arrays.asList(FREQUENCIES).indexOf(currentFrequency);
-                    appendResultToHearingList(index + 1);
-                    currentFrequency = FREQUENCIES[index + 1];
+                    appendResultToHearingList(currentFrequencyIndex + 1);
+                    currentFrequency = FREQUENCIES[currentFrequencyIndex + 1];
                 }
             }
 
@@ -319,9 +318,9 @@ public class ExaminationActivity extends Activity {
 
             // prepare volume variables
             currentAmplitudeWithoutMultiplier = MODE_VOLUMES[0][currentMode];
-            int index = Arrays.asList(FREQUENCIES).indexOf(currentFrequency);
-            amplitudeMultiplier = MULTIPLIERS[index];
-            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) MODE_VOLUMES[1][currentMode], 0);
+            amplitudeMultiplier = MULTIPLIERS[currentFrequencyIndex];
+            audioManager.setStreamVolume(
+                    AudioManager.STREAM_MUSIC, (int) MODE_VOLUMES[1][currentMode], 0);
             double currentAmplitudeWithMultiplier =
                     currentAmplitudeWithoutMultiplier * amplitudeMultiplier;
 
@@ -329,31 +328,40 @@ public class ExaminationActivity extends Activity {
             toneGen.stop();
             toneGen = new ToneGen((double)currentFrequency, currentAmplitudeWithMultiplier);
             toneGen.play();
-            if (examinationStatus == 1) {
+            if (currentEar == 1) {
                 toneGen.setVolume(0.1f, 0.0f);
-            } else if (examinationStatus == 2) {
+            } else if (currentEar == 2) {
                 toneGen.setVolume(0.0f, 0.1f);
             }
 
             updateDebugTextViewsText();
         }
 
+
         private void appendResultToHearingList(int maxHearingListSize) {
-            if (examinationStatus == 1 && leftEarHearingList.size() < maxHearingListSize) {
+            if (currentEar == 1 && leftEarHearingList.size() < maxHearingListSize) {
                 leftEarHearingList.add(11);
                 currentTestNumber =+ 1;
-            } else if (examinationStatus == 2 && rightEarHearingList.size() < maxHearingListSize) {
+            } else if (currentEar == 2 && rightEarHearingList.size() < maxHearingListSize) {
                 rightEarHearingList.add(11);
                 currentTestNumber =+ 1;
             }
         }
     };
 
+    private void addCurrentModeToEarList(List<Integer> list) {
+        try {
+            list.add(currentMode - 1);
+        } catch (Exception e) {
+            Log.d(TAG, "exception captured when adding to list");
+        }
+    }
+
     private void saveCurrentFrequencyAndCurrentMode() {
-        if (examinationStatus == 1) {
+        if (currentEar == 1) {
             appendFrequencyAndModeToResultDetailsBuilder();
             addCurrentModeToEarList(leftEarHearingList);
-        } else if (examinationStatus == 2) {
+        } else if (currentEar == 2) {
             appendFrequencyAndModeToResultDetailsBuilder();
             addCurrentModeToEarList(rightEarHearingList);
         }
@@ -390,13 +398,10 @@ public class ExaminationActivity extends Activity {
         super.onPause();
         toneGen.stop();
         isExaminationStopped = true;
-        examinationStatus = 0;
     }
 
     @Override
     public void onResume(){
         super.onResume();
-        isExaminationStopped = false;
-        examinationStatus = 0;
     }
 }
