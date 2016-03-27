@@ -3,12 +3,10 @@ package com.skradacz.audiometer;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
-import android.util.Log;
 
 class ToneGen {
 
     private AudioTrack audioTrack;
-    private static final String TAG = ToneGen.class.getSimpleName();
     private final int sampleRate = 20000;
     private final int duration = 6; // seconds
     private final int numSamples = duration * sampleRate;

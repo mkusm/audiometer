@@ -36,6 +36,11 @@ public class ExaminationActivity extends Activity {
     private final List<Integer> leftEarHearingList = new ArrayList<>();
     private final List<Integer> rightEarHearingList = new ArrayList<>();
 
+    private final double[][] Modes = {
+            {0.6, 0.7, 1.4, 3, 4, 8, 16, 32, 64, 64, 64},
+            {5, 5, 5, 5, 5, 5, 5, 5, 5, 7, 9}
+    };
+
     private double currentFrequency = 0;                                  // toneGen frequency
     private double currentAmplitudeWithoutMultiplier = 0;                 // toneGen amplitude
     private double amplitudeMultiplier = 0;
@@ -268,17 +273,23 @@ public class ExaminationActivity extends Activity {
                 return;
             }
 
+            // this is recursion call, which effectively works like loop with 3 second wait
             setNextVolumeLevelAfterThreeSeconds();
 
+            // begin examination, starting with left ear
             if (examinationStatus == 0) {
                 examinationStatus = 1;
             }
+
+            // this block is executed when user didn't click button through all modes in one frequency
             if (currentMode == 10) {
                 hearingLossOutOfRange = true;
                 currentMode++;
                 saveCurrentFrequencyAndCurrentMode();
             }
-            if (currentMode == 10 || currentMode == 11) {
+
+            // this block changes frequency after clicking button or after all modes passed
+            if (currentMode == 11) {
                 currentMode = -1;
                 if (currentFrequency == 0) {
                     currentFrequency = 250;
@@ -322,34 +333,12 @@ public class ExaminationActivity extends Activity {
                 }
             }
 
-
             currentMode++;
-            // TODO create Modes table
-//            currentAmplitudeWithoutMultiplier = Modes[0][currentMode];
-//            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, Modes[1][currentMode], 0);
+            currentAmplitudeWithoutMultiplier = Modes[0][currentMode];
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) Modes[1][currentMode], 0);
 
-            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 5, 0);
-
-            if (currentMode == 0) {
-                currentAmplitudeWithoutMultiplier = 0.6;
-            } else if (currentMode == 1) {
-                currentAmplitudeWithoutMultiplier = 0.7;
-            } else if (currentMode == 2) {
-                currentAmplitudeWithoutMultiplier = 1.4;
-            } else if (currentMode == 3) {
-                currentAmplitudeWithoutMultiplier = 3;
-            } else if (currentMode > 3 && currentMode < 9) {
-                currentAmplitudeWithoutMultiplier = (Math.pow(2, currentMode -2));
-            } else if (currentMode == 9) {
-                currentAmplitudeWithoutMultiplier = 64;
-                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 7, 0);
-            } else if (currentMode == 10) {
-                currentAmplitudeWithoutMultiplier = 64;
-                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 9, 0);
-            }
             double currentAmplitudeWithMultiplier =
                     currentAmplitudeWithoutMultiplier * amplitudeMultiplier;
-
 
             toneGen.stop();
             toneGen = new ToneGen(currentFrequency, currentAmplitudeWithMultiplier);
