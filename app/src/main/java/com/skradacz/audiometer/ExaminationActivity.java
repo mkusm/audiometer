@@ -33,7 +33,11 @@ public class ExaminationActivity extends Activity {
     private AudioManager audioManager;
     private ToneGen toneGen;
     private Handler handler = new Handler();
+
+    // This builder creates a String which will be used as a detailed result available after
+    // the examination.
     private StringBuilder examinationResultDetailsBuilder = new StringBuilder();
+
     private List<Integer> leftEarHearingList = new ArrayList<>();
     private List<Integer> rightEarHearingList = new ArrayList<>();
 
@@ -41,11 +45,12 @@ public class ExaminationActivity extends Activity {
             {0.6, 0.7, 1.4, 3, 4, 8, 16, 32, 64, 64, 64},
             {5, 5, 5, 5, 5, 5, 5, 5, 5, 7, 9}
     };
-//    private final Integer[] FREQUENCIES = {0, 250, 500, 1000, 2000, 4000, 8000};
-//    private final double[] MULTIPLIERS = {0, 0.61, 0.609, 0.609, 0.61, 0.619, 2.121};
+    private final Integer[] FREQUENCIES = {250, 500, 1000, 2000, 4000, 8000};
+    private final double[] MULTIPLIERS = {0.61, 0.609, 0.609, 0.61, 0.619, 2.121};
 
     private int currentFrequency = 8000;                                  // toneGen frequency
     private double currentAmplitudeWithoutMultiplier = 0;                 // toneGen amplitude
+    @SuppressWarnings("FieldCanBeLocal")
     private double amplitudeMultiplier = 0;
 
     private int currentMode = 11;
@@ -81,10 +86,6 @@ public class ExaminationActivity extends Activity {
         } else {
             setDebugTextViewsVisibility(View.INVISIBLE);
         }
-
-        // This builder creates a String which will be used as a detailed result available after
-        // the examination. The examination start with left ear.
-        examinationResultDetailsBuilder.append(getString(R.string.details_left_ear_text));
 
         // This button is the only button available during the examination.
         clickHereWhenYouHearTheSoundTextView.setOnClickListener(new View.OnClickListener() {
@@ -277,7 +278,7 @@ public class ExaminationActivity extends Activity {
                 return;
             }
 
-            // this is recursion call, which effectively works like loop with 3 second wait
+            // this is a recursion call, which effectively works like a loop with 3 second interval
             setNextVolumeLevelAfterThreeSeconds();
 
             // this block is executed when user didn't click button through all modes in one frequency
@@ -287,53 +288,29 @@ public class ExaminationActivity extends Activity {
                 saveCurrentFrequencyAndCurrentMode();
             }
 
-            if (currentMode == 11 && currentFrequency == 8000) {
-                currentMode = -1;
-                if (examinationStatus == 0) {
-                    examinationStatus++;
-                    currentFrequency = 250;
-                    amplitudeMultiplier = 0.61;
-                } else if (examinationStatus == 1) {
-                    appendResultToHearingList(6);
-                    examinationStatus++;
-                    currentFrequency = 250;
-                    amplitudeMultiplier = 0.61;
-                    examinationResultDetailsBuilder.append(getString(R.string.details_right_ear_text));
-                } else if (examinationStatus == 2) {
-                    appendResultToHearingList(6);
-                    toneGen.stop();
-                    isExaminationStopped = true;
-                    showExaminationResultAlertDialog();
-                    return;
-                }
-            }
-//            int index = Arrays.asList(FREQUENCIES).indexOf(currentFrequency);
-            // this block changes frequency after clicking button or after all modes passed
             if (currentMode == 11) {
                 currentMode = -1;
-                if (currentFrequency == 0) {
+                if (currentFrequency == 8000) {
                     currentFrequency = 250;
-                    amplitudeMultiplier = 0.61;
-                } else if (currentFrequency == 250) {
-                    currentFrequency = 500;
-                    amplitudeMultiplier = 0.609;
-                    appendResultToHearingList(1);
-                } else if (currentFrequency == 500) {
-                    currentFrequency = 1000;
-                    amplitudeMultiplier = 0.609;
-                    appendResultToHearingList(2);
-                } else if (currentFrequency == 1000) {
-                    currentFrequency = 2000;
-                    amplitudeMultiplier = 0.61;
-                    appendResultToHearingList(3);
-                } else if (currentFrequency == 2000) {
-                    currentFrequency = 4000;
-                    amplitudeMultiplier = 0.619;
-                    appendResultToHearingList(4);
-                } else if (currentFrequency == 4000) {
-                    currentFrequency = 8000;
-                    amplitudeMultiplier = 2.121;
-                    appendResultToHearingList(5);
+                    if (examinationStatus == 0) {
+                        examinationStatus++;
+                        examinationResultDetailsBuilder.append(getString(R.string.details_left_ear_text));
+                    } else if (examinationStatus == 1) {
+                        appendResultToHearingList(6);
+                        examinationStatus++;
+                        examinationResultDetailsBuilder.append(getString(R.string.details_right_ear_text));
+                    } else if (examinationStatus == 2) {
+                        appendResultToHearingList(6);
+                        toneGen.stop();
+                        isExaminationStopped = true;
+                        showExaminationResultAlertDialog();
+                        return;
+                    }
+                } else {
+                    // this block changes frequency after clicking button or after all modes passed
+                    int index = Arrays.asList(FREQUENCIES).indexOf(currentFrequency);
+                    appendResultToHearingList(index + 1);
+                    currentFrequency = FREQUENCIES[index + 1];
                 }
             }
 
@@ -342,6 +319,8 @@ public class ExaminationActivity extends Activity {
 
             // prepare volume variables
             currentAmplitudeWithoutMultiplier = MODE_VOLUMES[0][currentMode];
+            int index = Arrays.asList(FREQUENCIES).indexOf(currentFrequency);
+            amplitudeMultiplier = MULTIPLIERS[index];
             audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) MODE_VOLUMES[1][currentMode], 0);
             double currentAmplitudeWithMultiplier =
                     currentAmplitudeWithoutMultiplier * amplitudeMultiplier;
