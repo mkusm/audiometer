@@ -13,6 +13,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -31,17 +32,19 @@ public class ExaminationActivity extends Activity {
 
     private AudioManager audioManager;
     private ToneGen toneGen;
-    private final Handler handler = new Handler();
-    private final StringBuilder examinationResultDetailsBuilder = new StringBuilder();
-    private final List<Integer> leftEarHearingList = new ArrayList<>();
-    private final List<Integer> rightEarHearingList = new ArrayList<>();
+    private Handler handler = new Handler();
+    private StringBuilder examinationResultDetailsBuilder = new StringBuilder();
+    private List<Integer> leftEarHearingList = new ArrayList<>();
+    private List<Integer> rightEarHearingList = new ArrayList<>();
 
-    private final double[][] modes = {
+    private final double[][] MODE_VOLUMES = {
             {0.6, 0.7, 1.4, 3, 4, 8, 16, 32, 64, 64, 64},
             {5, 5, 5, 5, 5, 5, 5, 5, 5, 7, 9}
     };
+//    private final Integer[] FREQUENCIES = {0, 250, 500, 1000, 2000, 4000, 8000};
+//    private final double[] MULTIPLIERS = {0, 0.61, 0.609, 0.609, 0.61, 0.619, 2.121};
 
-    private double currentFrequency = 0;                                  // toneGen frequency
+    private int currentFrequency = 8000;                                  // toneGen frequency
     private double currentAmplitudeWithoutMultiplier = 0;                 // toneGen amplitude
     private double amplitudeMultiplier = 0;
 
@@ -49,7 +52,7 @@ public class ExaminationActivity extends Activity {
     private int currentTestNumber = 1;
     private boolean isExaminationStopped = false;
     private String examinationResultDetails;
-    // examinationStatus  0 - not started, 1 - left ear, 2 - right ear, 3 - finished
+    // examinationStatus  0 - not started, 1 - left ear, 2 - right ear
     private int examinationStatus = 0;
     private double previousFrequency = 1;
     private boolean hearingLossOutOfRange = false;
@@ -104,7 +107,8 @@ public class ExaminationActivity extends Activity {
 
                 // inform volumeChanger that current test is done
                 currentMode = 11;
-                if (currentFrequency == 8000 && (examinationStatus == 2 || examinationStatus == 3)) {
+                if (currentFrequency == 8000 && examinationStatus == 2) {
+                    isExaminationStopped = true;
                     showExaminationResultAlertDialog();
                 }
                 toneGen.stop();
@@ -276,11 +280,6 @@ public class ExaminationActivity extends Activity {
             // this is recursion call, which effectively works like loop with 3 second wait
             setNextVolumeLevelAfterThreeSeconds();
 
-            // begin examination, starting with left ear
-            if (examinationStatus == 0) {
-                examinationStatus = 1;
-            }
-
             // this block is executed when user didn't click button through all modes in one frequency
             if (currentMode == 10) {
                 hearingLossOutOfRange = true;
@@ -288,6 +287,27 @@ public class ExaminationActivity extends Activity {
                 saveCurrentFrequencyAndCurrentMode();
             }
 
+            if (currentMode == 11 && currentFrequency == 8000) {
+                currentMode = -1;
+                if (examinationStatus == 0) {
+                    examinationStatus++;
+                    currentFrequency = 250;
+                    amplitudeMultiplier = 0.61;
+                } else if (examinationStatus == 1) {
+                    appendResultToHearingList(6);
+                    examinationStatus++;
+                    currentFrequency = 250;
+                    amplitudeMultiplier = 0.61;
+                    examinationResultDetailsBuilder.append(getString(R.string.details_right_ear_text));
+                } else if (examinationStatus == 2) {
+                    appendResultToHearingList(6);
+                    toneGen.stop();
+                    isExaminationStopped = true;
+                    showExaminationResultAlertDialog();
+                    return;
+                }
+            }
+//            int index = Arrays.asList(FREQUENCIES).indexOf(currentFrequency);
             // this block changes frequency after clicking button or after all modes passed
             if (currentMode == 11) {
                 currentMode = -1;
@@ -314,22 +334,6 @@ public class ExaminationActivity extends Activity {
                     currentFrequency = 8000;
                     amplitudeMultiplier = 2.121;
                     appendResultToHearingList(5);
-                } else if (currentFrequency == 8000) {
-                    appendResultToHearingList(6);
-                    if (examinationStatus == 1) {
-                        examinationStatus = 2;
-                        currentFrequency = 250;
-                        amplitudeMultiplier = 0.61;
-                        examinationResultDetailsBuilder.append(getString(R.string.details_right_ear_text));
-                    } else if (examinationStatus == 2){
-                        examinationStatus = 3;
-                    }
-                    if (examinationStatus == 3) {
-                        toneGen.stop();
-                        isExaminationStopped = true;
-                        showExaminationResultAlertDialog();
-                        return;
-                    }
                 }
             }
 
@@ -337,14 +341,14 @@ public class ExaminationActivity extends Activity {
             currentMode++;
 
             // prepare volume variables
-            currentAmplitudeWithoutMultiplier = modes[0][currentMode];
-            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) modes[1][currentMode], 0);
+            currentAmplitudeWithoutMultiplier = MODE_VOLUMES[0][currentMode];
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) MODE_VOLUMES[1][currentMode], 0);
             double currentAmplitudeWithMultiplier =
                     currentAmplitudeWithoutMultiplier * amplitudeMultiplier;
 
             // stop previous sound and start new one with new volume settings
             toneGen.stop();
-            toneGen = new ToneGen(currentFrequency, currentAmplitudeWithMultiplier);
+            toneGen = new ToneGen((double)currentFrequency, currentAmplitudeWithMultiplier);
             toneGen.play();
             if (examinationStatus == 1) {
                 toneGen.setVolume(0.1f, 0.0f);
