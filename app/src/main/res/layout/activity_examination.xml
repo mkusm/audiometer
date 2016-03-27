@@ -20,7 +20,7 @@
         android:textSize="50sp"
         android:gravity="center"
         android:text="@string/sound_hear_text_view"
-        android:clickable="true"
+        android:clickable="false"
         android:layout_centerVertical="true"
         android:onClick=""/>
 

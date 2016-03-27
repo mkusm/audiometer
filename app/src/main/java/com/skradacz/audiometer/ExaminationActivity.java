@@ -37,6 +37,7 @@ public class ExaminationActivity extends Activity {
     // This builder creates a String which will be used as a detailed result available after
     // the examination.
     private StringBuilder examinationResultDetailsBuilder = new StringBuilder();
+    private String examinationResultDetails;
 
     private List<Integer> leftEarHearingList = new ArrayList<>();
     private List<Integer> rightEarHearingList = new ArrayList<>();
@@ -52,15 +53,14 @@ public class ExaminationActivity extends Activity {
     private double currentAmplitudeWithoutMultiplier = 0;                 // toneGen amplitude
     @SuppressWarnings("FieldCanBeLocal")
     private double amplitudeMultiplier = 0;
-
+    private int currentEar = 1;
     private int currentMode = 11;
     private int currentTestNumber = 1;
-    private boolean isExaminationStopped = false;
-    private String examinationResultDetails;
-    private int currentEar = 1;  // 1 - left ear, 2 - right ear
+    private boolean examinationStopped = false;
     private boolean examinationStarted = false;
-    private double previousFrequency = 1;
+    private boolean examinationFinished  = false;
     private boolean hearingLossOutOfRange = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +79,6 @@ public class ExaminationActivity extends Activity {
 
         audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
         toneGen = new ToneGen(currentFrequency, currentAmplitudeWithoutMultiplier);
-        clickHereWhenYouHearTheSoundTextView.setClickable(false);
         setNextVolumeLevelAfterThreeSeconds();
         examinationResultDetailsBuilder.append(getString(R.string.details_left_ear_text));
 
@@ -96,22 +95,15 @@ public class ExaminationActivity extends Activity {
         clickHereWhenYouHearTheSoundTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                // makes sure currentFrequency was changed before button was clicked
-                // todo why do i do this? cant remember
-                if (previousFrequency == currentFrequency) {
-                    return;
-                }
-
                 // User is not supposed to click the button for first three seconds of the new test,
                 // because there is no sound yet. Button is set back to clickable later in the code,
                 // once the volume has been increased for the first time.
                 clickHereWhenYouHearTheSoundTextView.setClickable(false);
 
-                // record the results of current test
+                // save results of current test
                 saveCurrentFrequencyAndCurrentMode();
 
-                // inform volumeChanger that current test is done
+                // inform volumeChanger that test for current frequency is done
                 currentMode = 11;
                 if (currentFrequency == 8000 && currentEar == 2) {
                     finishExamination();
@@ -123,15 +115,15 @@ public class ExaminationActivity extends Activity {
                 if (currentTestNumber < 13) {
                     currentTestNumberTextView.setText(String.format("Test %d/12", currentTestNumber));
                 }
-
-                previousFrequency = currentFrequency;
             }
         });
+
+        clickHereWhenYouHearTheSoundTextView.setClickable(false);
     }
 
     private void finishExamination() {
         toneGen.stop();
-        isExaminationStopped = true;
+        examinationStopped = true;
         showExaminationResultAlertDialog();
     }
 
@@ -266,13 +258,10 @@ public class ExaminationActivity extends Activity {
         @Override
         public void run() {
 
-            // after the first volume increase, user is allowed to click the button
-            clickHereWhenYouHearTheSoundTextView.setClickable(true);
-
-            // isExaminationStopped is true if:
+            // examinationStopped is true if:
             //  - user paused or left activity
             //  - the examination ended (frequency 8000 and (button clicked or mode > 10))
-            if (isExaminationStopped) {
+            if (examinationStopped) {
                 return;
             }
 
@@ -285,39 +274,21 @@ public class ExaminationActivity extends Activity {
                 currentMode++;
                 saveCurrentFrequencyAndCurrentMode();
             }
-            
-            int currentFrequencyIndex = Arrays.asList(FREQUENCIES).indexOf(currentFrequency);
 
-            // this block changes frequency after clicking button or after all modes passed
             if (currentMode == 11) {
-                currentMode = -1;
-                if (currentFrequency == FREQUENCIES[FREQUENCIES.length - 1]) {
-                    currentFrequency = FREQUENCIES[0];
-                    if (examinationStarted) {
-                        appendResultToHearingList(6);
-                        if (currentEar == 1) {
-                            // move to right ear
-                            currentEar++;
-                            examinationResultDetailsBuilder.append(getString(R.string.details_right_ear_text));
-                        } else {
-                            // finish examination
-                            finishExamination();
-                            return;
-                        }
-                    } else {
-                        examinationStarted = true;
-                    }
-                } else {
-                    appendResultToHearingList(currentFrequencyIndex + 1);
-                    currentFrequency = FREQUENCIES[currentFrequencyIndex + 1];
+                // change frequency after clicking button or after all modes passed
+                changeFrequency();
+                if (examinationFinished) {
+                    return;
                 }
+                currentMode = 0;
+            } else {
+                currentMode++;
             }
-
-            // move to next volume
-            currentMode++;
 
             // prepare volume variables
             currentAmplitudeWithoutMultiplier = MODE_VOLUMES[0][currentMode];
+            int currentFrequencyIndex = Arrays.asList(FREQUENCIES).indexOf(currentFrequency);
             amplitudeMultiplier = MULTIPLIERS[currentFrequencyIndex];
             audioManager.setStreamVolume(
                     AudioManager.STREAM_MUSIC, (int) MODE_VOLUMES[1][currentMode], 0);
@@ -335,6 +306,33 @@ public class ExaminationActivity extends Activity {
             }
 
             updateDebugTextViewsText();
+
+            // after the first volume in frequency, user is allowed to click the button
+            clickHereWhenYouHearTheSoundTextView.setClickable(true);
+        }
+
+        private void changeFrequency() {
+            if (currentFrequency == FREQUENCIES[FREQUENCIES.length - 1]) {
+                // after the last frequency we either move to next ear or finish examination
+                currentFrequency = FREQUENCIES[0];
+                if (examinationStarted) {
+                    appendResultToHearingList(6);
+                    if (currentEar == 1) {
+                        // move to right ear
+                        currentEar++;
+                        examinationResultDetailsBuilder.append(getString(R.string.details_right_ear_text));
+                    } else {
+                        finishExamination();
+                        examinationFinished = true;
+                    }
+                } else {
+                    examinationStarted = true;
+                }
+            } else {
+                int currentFrequencyIndex = Arrays.asList(FREQUENCIES).indexOf(currentFrequency);
+                appendResultToHearingList(currentFrequencyIndex + 1);
+                currentFrequency = FREQUENCIES[currentFrequencyIndex + 1];
+            }
         }
 
 
@@ -397,7 +395,7 @@ public class ExaminationActivity extends Activity {
     public void onPause(){
         super.onPause();
         toneGen.stop();
-        isExaminationStopped = true;
+        examinationStopped = true;
     }
 
     @Override
