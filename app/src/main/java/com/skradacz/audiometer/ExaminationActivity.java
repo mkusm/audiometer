@@ -36,7 +36,7 @@ public class ExaminationActivity extends Activity {
     private final List<Integer> leftEarHearingList = new ArrayList<>();
     private final List<Integer> rightEarHearingList = new ArrayList<>();
 
-    private final double[][] Modes = {
+    private final double[][] modes = {
             {0.6, 0.7, 1.4, 3, 4, 8, 16, 32, 64, 64, 64},
             {5, 5, 5, 5, 5, 5, 5, 5, 5, 7, 9}
     };
@@ -333,13 +333,16 @@ public class ExaminationActivity extends Activity {
                 }
             }
 
+            // move to next volume
             currentMode++;
-            currentAmplitudeWithoutMultiplier = Modes[0][currentMode];
-            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) Modes[1][currentMode], 0);
 
+            // prepare volume variables
+            currentAmplitudeWithoutMultiplier = modes[0][currentMode];
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) modes[1][currentMode], 0);
             double currentAmplitudeWithMultiplier =
                     currentAmplitudeWithoutMultiplier * amplitudeMultiplier;
 
+            // stop previous sound and start new one with new volume settings
             toneGen.stop();
             toneGen = new ToneGen(currentFrequency, currentAmplitudeWithMultiplier);
             toneGen.play();
@@ -348,6 +351,7 @@ public class ExaminationActivity extends Activity {
             } else if (examinationStatus == 2) {
                 toneGen.setVolume(0.0f, 0.1f);
             }
+
             updateDebugTextViewsText();
         }
 
