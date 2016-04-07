@@ -13,9 +13,9 @@ class ToneGen {
     private final byte generatedSnd[] = new byte[2 * numSamples];
 
     public ToneGen(double frequency, double amplitude){
-        // fill out the array
         double[] sample = new double[numSamples];
         for (int i = 0; i < numSamples; ++i) {
+            // sine wave: y(t) = A*sin(2*pi*f*t)
             sample[i] = Math.sin(2 * Math.PI * i / (sampleRate/frequency));
         }
 
